@@ -5,8 +5,8 @@ import java.awt.Paint;
 
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.visualization.picking.PickedInfo;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaRelation;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Provides a transformation from a given ONDEXMetaRelation to a Colour.
@@ -19,8 +19,8 @@ public class SubGraphMetaRelationColors implements
 
 	// ####FIELDS####
 
-	// current PickedInfo
-	private PickedInfo<ONDEXMetaRelation> pi = null;
+	// current SelectedState
+	private SelectedState<ONDEXMetaRelation> pi = null;
 
 	// ####CONSTRUCTOR####
 
@@ -30,7 +30,7 @@ public class SubGraphMetaRelationColors implements
 	 * @param pi
 	 *            PickedInfo<ONDEXMetaRelation> pi
 	 */
-	public SubGraphMetaRelationColors(PickedInfo<ONDEXMetaRelation> pi) {
+	public SubGraphMetaRelationColors(SelectedState<ONDEXMetaRelation> pi) {
 		if (pi == null)
 			throw new IllegalArgumentException(
 					"PickedInfo instance must be non-null");
@@ -47,7 +47,7 @@ public class SubGraphMetaRelationColors implements
 	 * @return Colour
 	 */
 	public Color transform(ONDEXMetaRelation edge) {
-		if (pi.isPicked(edge))
+		if (pi.isSelected(edge))
 			return Color.YELLOW;
 		if (edge.isVisible())
 			return Color.BLUE;

@@ -5,8 +5,8 @@ import java.awt.Paint;
 
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.visualization.picking.PickedInfo;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaConcept;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Provides a transformation from a given ONDEXMetaConcept to a Colour.
@@ -19,8 +19,8 @@ public class SubGraphMetaConceptColors implements
 
 	// ####FIELDS####
 
-	// current PickedInfo
-	private PickedInfo<ONDEXMetaConcept> pi = null;
+	// current SelectedState
+	private SelectedState<ONDEXMetaConcept> pi = null;
 
 	// ####CONSTRUCTOR####
 
@@ -30,7 +30,7 @@ public class SubGraphMetaConceptColors implements
 	 * @param pi
 	 *            PickedInfo<ONDEXMetaConcept>
 	 */
-	public SubGraphMetaConceptColors(PickedInfo<ONDEXMetaConcept> pi) {
+	public SubGraphMetaConceptColors(SelectedState<ONDEXMetaConcept> pi) {
 		if (pi == null)
 			throw new IllegalArgumentException(
 					"PickedInfo instance must be non-null");
@@ -47,7 +47,7 @@ public class SubGraphMetaConceptColors implements
 	 * @return Colour
 	 */
 	public Color transform(ONDEXMetaConcept node) {
-		if (pi.isPicked(node))
+		if (pi.isSelected(node))
 			return Color.YELLOW;
 		if (node.isVisible())
 			return Color.BLUE;

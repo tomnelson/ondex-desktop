@@ -1,28 +1,5 @@
 package net.sourceforge.ondex.ovtk2.layout;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.apache.commons.collections15.Transformer;
-
 import net.sourceforge.ondex.core.Attribute;
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ONDEXConcept;
@@ -40,7 +17,18 @@ import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Layout based on the KKLayout from JUNG taking Attribute values into account
@@ -424,7 +412,6 @@ public class AttributeKKLayout extends OVTK2Layouter implements ActionListener,
 		return distanceMap;
 	}
 
-
 	@Override
 	public JPanel getOptionPanel() {
 
@@ -514,15 +501,17 @@ public class AttributeKKLayout extends OVTK2Layouter implements ActionListener,
 		JComboBox box = (JComboBox) arg0.getSource();
 		String name = (String) box.getSelectedItem();
 		an = aog.getMetaData().getAttributeName(name);
-		if (an == null) {
-			this.distance = new UnweightedShortestPath<ONDEXConcept, ONDEXRelation>(
-					graph);
-			this.reset();
-		} else {
-			this.distance = new DijkstraDistance<ONDEXConcept, ONDEXRelation>(
-					graph, new GDSEdges(an, inverseScale), true);
-			this.reset();
-		}
+		this.distance = getDistances(graph);
+		this.reset();
+//		if (an == null) {
+//			this.distance = new UnweightedShortestPath<ONDEXConcept, ONDEXRelation>(
+//					graph);
+//			this.reset();
+//		} else {
+//			this.distance = new DijkstraDistance<ONDEXConcept, ONDEXRelation>(
+//					graph, new GDSEdges(an, inverseScale), true);
+//			this.reset();
+//		}
 	}
 
 	/**
