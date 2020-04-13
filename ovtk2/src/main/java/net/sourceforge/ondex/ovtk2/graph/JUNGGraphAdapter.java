@@ -11,14 +11,12 @@ import java.util.Map;
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.map.LazyMap;
 
-import edu.uci.ics.jung.graph.AbstractGraph;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXEntity;
 import net.sourceforge.ondex.core.ONDEXGraph;
 import net.sourceforge.ondex.core.ONDEXRelation;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.AbstractGraph;
 
 /**
  * Adapter to JUNG graph library adding additional visibility constrains.
@@ -26,7 +24,7 @@ import net.sourceforge.ondex.core.ONDEXRelation;
  * @author taubertj
  * 
  */
-public abstract class JUNGGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEXRelation> implements DirectedGraph<ONDEXConcept, ONDEXRelation>, ONDEXGraph {
+public abstract class JUNGGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEXRelation> implements Graph<ONDEXConcept, ONDEXRelation>, ONDEXGraph {
 
 	/**
 	 * generated
@@ -252,25 +250,26 @@ public abstract class JUNGGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEX
 		return getConcept(vertex.getId()) != null && isVisible(vertex);
 	}
 
-	@Override
-	public EdgeType getDefaultEdgeType() {
-		return EdgeType.DIRECTED;
-	}
+//	@Override
+//	public EdgeType getDefaultEdgeType() {
+//		return EdgeType.DIRECTED;
+//	}
 
-	@Override
+//	@Override
 	public ONDEXConcept getDest(ONDEXRelation edge) {
 		if (!containsEdge(edge))
 			return null;
 
-		return getEndpoints(edge).getSecond();
+		return getEdgeTarget(edge);
+//				getEndpoints(edge).getSecond();
 	}
 
-	@Override
+//	@Override
 	public int getEdgeCount() {
-		return getEdges().size();
+		return edgeSet().size();
 	}
 
-	@Override
+//	@Override
 	public int getEdgeCount(EdgeType edge_type) {
 		if (edge_type == EdgeType.DIRECTED)
 			return getEdgeCount();

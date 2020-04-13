@@ -16,13 +16,13 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import edu.uci.ics.jung.graph.Graph;
 import net.sourceforge.ondex.core.Attribute;
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
+import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * Layout per chromosome and GEMLayout.
@@ -323,10 +323,10 @@ public class GDSPositionLayout extends OVTK2Layouter {
 						double newvalue = ((value - minBegin) / diff);
 
 						// set location of node
-						Point2D coord = transform(reverse.get(gene));
+						Point coord = apply(reverse.get(gene));
 						double newY = startY + fifthHeight * newvalue;
 						double newX = startX + currentX;
-						coord.setLocation(newX, newY);
+						coord.set(newX, newY);
 					}
 				}
 				// System.err.println(chromo + " --> " + numGenes + " genes");

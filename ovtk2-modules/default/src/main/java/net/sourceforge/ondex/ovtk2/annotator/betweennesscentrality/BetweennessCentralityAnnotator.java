@@ -36,7 +36,6 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.map.LazyMap;
 
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXRelation;
@@ -46,6 +45,8 @@ import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.ovtk2.util.SpringUtilities;
+import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Implements a node ranking according to betweenness centrality. See Ulrik
@@ -171,8 +172,8 @@ public class BetweennessCentralityAnnotator extends OVTK2Annotator implements
 	 */
 	public void valueChanged(ListSelectionEvent e) {
 		ONDEXJUNGGraph graph = viewer.getONDEXJUNGGraph();
-		PickedState<ONDEXConcept> state = viewer.getVisualizationViewer()
-				.getPickedVertexState();
+		MutableSelectedState<ONDEXConcept> state = viewer.getVisualizationViewer()
+				.getSelectedVertexState();
 		state.clear();
 
 		int[] selection = table.getSelectedRows();
@@ -180,7 +181,7 @@ public class BetweennessCentralityAnnotator extends OVTK2Annotator implements
 			int index = table.convertRowIndexToModel(selection[i]);
 			Integer id = (Integer) table.getModel().getValueAt(index, 0);
 			ONDEXConcept node = graph.getConcept(id);
-			state.pick(node, true);
+			state.select(node, true);
 		}
 	}
 
@@ -228,7 +229,7 @@ public class BetweennessCentralityAnnotator extends OVTK2Annotator implements
 			});
 			nodeShapes.updateAll();
 
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();
 			viewer.getVisualizationViewer().repaint();
 
 			// add value as Attribute

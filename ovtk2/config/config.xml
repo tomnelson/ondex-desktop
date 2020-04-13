@@ -20,13 +20,13 @@
 <entry key="Dialog.Attribute.java.awt.Color">ColorEditor</entry>
 <entry key="FilterClose.Set">false</entry>
 <entry key="Dialog.Attribute.java.lang.Long">LongEditor</entry>
-<entry key="Viewer.VertexMenu.ShowNodeSameTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowNodeSameTagItem</entry>
 <entry key="Dialog.Attribute.java.util.Date">DateEditor</entry>
+<entry key="Viewer.VertexMenu.ShowNodeSameTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowNodeSameTagItem</entry>
 <entry key="Viewer.VertexMenu.ChangeNodeShapeItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ChangeNodeShapeItem</entry>
 <entry key="JIRA.User">dashboard</entry>
 <entry key="Program.Language">english</entry>
-<entry key="Webservice.Enable">false</entry>
 <entry key="Viewer.VertexMenu.HideNodeTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.HideNodeTagItem</entry>
+<entry key="Webservice.Enable">false</entry>
 <entry key="Dialog.Attribute.java.util.List">ListEditor</entry>
 <entry key="JIRA.Password">a9b8c7d6</entry>
 <entry key="Notifications.Set">true</entry>
@@ -51,8 +51,8 @@
 <entry key="ContentsDisplay.Plugins">EntityInfoPlugin;AccessionPlugin;TaxidPlugin;ConfidencePlugin;SequencePlugin;PublicationPlugin;HierarchyPlugin;URIPlugin;StructurePlugin;EvidencePlugin;ChemicalStructurePlugin</entry>
 <entry key="Menu.Filter.Tag">net.sourceforge.ondex.ovtk2.filter.tag.TagFilter</entry>
 <entry key="Dialog.Attribute.java.lang.Integer">IntegerEditor</entry>
-<entry key="Viewer.VertexMenu.ShowNodeLabelItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowNodeLabelItem</entry>
 <entry key="Viewer.EdgeMenu.HideEdgeRelationTypeItem">net.sourceforge.ondex.ovtk2.ui.popup.items.HideEdgeRelationTypeItem</entry>
+<entry key="Viewer.VertexMenu.ShowNodeLabelItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowNodeLabelItem</entry>
 <entry key="Menu.Layout.Static">net.sourceforge.ondex.ovtk2.layout.StaticLayout</entry>
 <entry key="Viewer.EdgeMenu.ShowEdgeSameTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowEdgeSameTagItem</entry>
 <entry key="Taverna.Enable">false</entry>
@@ -69,12 +69,12 @@
 <entry key="flags.debug">false</entry>
 <entry key="Viewer.EdgeMenu.ShowEdgeLabelItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowEdgeLabelItem</entry>
 <entry key="Tutorial.HTML">user_guide_master.pdf</entry>
-<entry key="Welcome.Show">true</entry>
 <entry key="Menu.Annotator.ShapeConcept">net.sourceforge.ondex.ovtk2.annotator.shapeconcept.ShapeConceptAnnotator</entry>
+<entry key="Welcome.Show">true</entry>
 <entry key="PopupEditor.Enable">true</entry>
 <entry key="Program.Author">The ONDEX Project</entry>
-<entry key="JIRA.URL">http://ondex.rothamsted.ac.uk/tracking/rpc/xmlrpc</entry>
 <entry key="Viewer.VertexMenu.HideNodeConceptClassItem">net.sourceforge.ondex.ovtk2.ui.popup.items.HideNodeConceptClassItem</entry>
+<entry key="JIRA.URL">http://ondex.rothamsted.ac.uk/tracking/rpc/xmlrpc</entry>
 <entry key="Viewer.VertexMenu.ChangeNodeSetFlagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ChangeNodeSetFlagItem</entry>
 <entry key="Dialog.Attribute.java.lang.Boolean">BooleanEditor</entry>
 <entry key="Viewer.VertexMenu.ExportNodeLabelItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ExportNodeLabelItem</entry>
@@ -84,6 +84,6 @@
 <entry key="Overwrite.Set">true</entry>
 <entry key="Viewer.VertexMenu.ShowNodeTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowNodeTagItem</entry>
 <entry key="Program.User">ovtk</entry>
-<entry key="Viewer.VertexMenu.HideNodeDataSourceItem">net.sourceforge.ondex.ovtk2.ui.popup.items.HideNodeDataSourceItem</entry>
 <entry key="Menu.Annotator.ScaleColorRelation">net.sourceforge.ondex.ovtk2.annotator.scalecolorrelation.ScaleColorRelationAnnotator</entry>
+<entry key="Viewer.VertexMenu.HideNodeDataSourceItem">net.sourceforge.ondex.ovtk2.ui.popup.items.HideNodeDataSourceItem</entry>
 </properties>

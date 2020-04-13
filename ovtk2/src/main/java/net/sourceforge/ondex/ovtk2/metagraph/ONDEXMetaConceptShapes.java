@@ -4,9 +4,9 @@ import java.awt.Shape;
 import java.util.Hashtable;
 import java.util.Map;
 
+import net.sourceforge.ondex.ovtk2.util.VertexShapeFactory;
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.visualization.util.VertexShapeFactory;
 import net.sourceforge.ondex.core.ConceptClass;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;

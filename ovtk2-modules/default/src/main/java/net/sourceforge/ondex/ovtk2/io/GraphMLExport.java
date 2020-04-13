@@ -24,17 +24,13 @@ import javax.xml.stream.XMLStreamException;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXGraph;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
 import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.VisualizationViewer;
 
 /**
  * This class represents a GraphML export using Stax2 XML writer.
@@ -80,7 +76,7 @@ public class GraphMLExport implements OVTK2IO {
 	 * @throws XMLStreamException
 	 */
 	private void writeDocument(Graph<ONDEXConcept, ONDEXRelation> graph,
-			XMLStreamWriter2 xmlw) throws XMLStreamException {
+							   XMLStreamWriter2 xmlw) throws XMLStreamException {
 
 		xmlw.writeStartDocument("ISO-8859-1", "1.0");
 		writeGraphml(graph, xmlw);
@@ -174,8 +170,8 @@ public class GraphMLExport implements OVTK2IO {
 
 		xmlw.writeStartElement("graph");
 
-		directed = graph instanceof DirectedGraph;
-		undirected = graph instanceof UndirectedGraph;
+		directed = graph.getType().isDirected();
+		undirected = graph.getType().isUndirected();
 
 		if (directed)
 			xmlw.writeAttribute("edgedefault", "directed");
@@ -193,13 +189,13 @@ public class GraphMLExport implements OVTK2IO {
 		xmlw.writeAttribute("parse.order", "free");
 
 		// write all vertices
-		Iterator<ONDEXConcept> it_v = graph.getVertices().iterator();
+		Iterator<ONDEXConcept> it_v = graph.vertexSet().iterator();
 		while (it_v.hasNext()) {
 			writeNode(it_v.next(), xmlw);
 		}
 
 		// write all edges
-		Iterator<ONDEXRelation> it_e = graph.getEdges().iterator();
+		Iterator<ONDEXRelation> it_e = graph.edgeSet().iterator();
 		while (it_e.hasNext()) {
 			writeEdge(graph, it_e.next(), xmlw);
 		}

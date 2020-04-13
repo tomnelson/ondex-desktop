@@ -23,16 +23,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
@@ -40,6 +30,10 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaConceptMenu;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaRelationMenu;
 import net.sourceforge.ondex.ovtk2.ui.popup.PopupVertexEdgeMenuMousePlugin;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 
 public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, ChangeListener, ComponentListener {
 
@@ -50,7 +44,7 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 	private Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>();
 
 	// MetaGraph layout used
-	private KKLayout<ONDEXMetaConcept, ONDEXMetaRelation> layout = null;
+	private KKLayoutAlgorithm<ONDEXMetaConcept> layout = null;
 
 	// display metagraph
 	private ONDEXMetaGraph meta = null;

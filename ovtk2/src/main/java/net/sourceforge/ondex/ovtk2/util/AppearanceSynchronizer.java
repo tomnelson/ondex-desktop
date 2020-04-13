@@ -19,7 +19,6 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.map.LazyMap;
 
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import net.sourceforge.ondex.core.Attribute;
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ONDEXConcept;
@@ -41,6 +40,8 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.ovtk2.ui.dialog.DialogConceptLabel;
 import net.sourceforge.ondex.ovtk2.ui.menu.actions.AppearanceMenuAction;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * Provides methods for storing and retrieving graphical attributes of the graph
@@ -169,20 +170,10 @@ public class AppearanceSynchronizer {
 		// get saved font
 		final Font vertexFont = activeViewer.getVertexFont();
 		if (vertexFont != null)
-			activeViewer.getVisualizationViewer().getRenderContext().setVertexFontTransformer(new Transformer<ONDEXConcept, Font>() {
-				@Override
-				public Font transform(ONDEXConcept input) {
-					return vertexFont;
-				}
-			});
+			activeViewer.getVisualizationViewer().getRenderContext().setVertexFontFunction(v -> vertexFont);
 		final Font edgeFont = activeViewer.getEdgeFont();
 		if (edgeFont != null)
-			activeViewer.getVisualizationViewer().getRenderContext().setEdgeFontTransformer(new Transformer<ONDEXRelation, Font>() {
-				@Override
-				public Font transform(ONDEXRelation input) {
-					return edgeFont;
-				}
-			});
+			activeViewer.getVisualizationViewer().getRenderContext().setEdgeFontFunction(e -> edgeFont);
 
 		// hack to get saved label positions set
 		DialogConceptLabel labels = new DialogConceptLabel(activeViewer);
@@ -488,21 +479,21 @@ public class AppearanceSynchronizer {
 		}
 
 		// set positions and visibility
-		Layout<ONDEXConcept, ONDEXRelation> layout = activeViewer.getVisualizationViewer().getGraphLayout();
+		LayoutModel<ONDEXConcept> layout = activeViewer.getVisualizationViewer().getVisualizationModel().getLayoutModel();
 		for (ONDEXConcept c : graph.getVertices()) {
-			Point2D p = layout.transform(c);
+			Point p = layout.apply(c);
 			// store X coordinate
 			Attribute graphicalX = c.getAttribute(attrGraphicalX);
 			if (graphicalX == null)
-				c.createAttribute(attrGraphicalX, p.getX(), false);
+				c.createAttribute(attrGraphicalX, p.x, false);
 			else
-				graphicalX.setValue(p.getX());
+				graphicalX.setValue(p.x);
 			// store Y coordinate
 			Attribute graphicalY = c.getAttribute(attrGraphicalY);
 			if (graphicalY == null)
-				c.createAttribute(attrGraphicalY, p.getY(), false);
+				c.createAttribute(attrGraphicalY, p.y, false);
 			else
-				graphicalY.setValue(p.getY());
+				graphicalY.setValue(p.y);
 			// store visibility, is true for all node in JUNG Graph
 			Attribute visible = c.getAttribute(attrVisible);
 			if (visible == null)

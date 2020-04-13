@@ -20,16 +20,19 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.EpsGraphics;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
 import net.sourceforge.ondex.ovtk2.util.graphml.GraphMLWriter;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
+
+import static org.jungrapht.visualization.MultiLayerTransformer.*;
 
 /**
  * @author hindlem, peschr, taubertj
@@ -59,36 +62,34 @@ public class ImageWriterUtil<V, E> {
 	 * 
 	 * @return Point2D[]
 	 */
-	private Point2D[] calcBounds() {
-		Point2D min = null;
-		Point2D max = null;
-		Layout<V, E> layout = visviewer.getGraphLayout();
-		for (V ondexNode : layout.getGraph().getVertices()) {
-			Point2D point = layout.transform(ondexNode);
+	private Point[] calcBounds() {
+		Point min = null;
+		Point max = null;
+		LayoutModel<V> layout = visviewer.getVisualizationModel().getLayoutModel();
+		for (V ondexNode : layout.getGraph().vertexSet()) {
+			Point point = layout.apply(ondexNode);
 			if (min == null) {
-				min = new Point2D.Double(0, 0);
-				min.setLocation(point);
+				min = point;
 			}
 			if (max == null) {
-				max = new Point2D.Double(0, 0);
-				max.setLocation(point);
+				max = point;
 			}
-			min.setLocation(Math.min(min.getX(), point.getX()), Math.min(min.getY(), point.getY()));
-			max.setLocation(Math.max(max.getX(), point.getX()), Math.max(max.getY(), point.getY()));
+			min = Point.of(Math.min(min.x, point.x), Math.min(min.y, point.y));
+			max = Point.of(Math.max(max.x, point.x), Math.max(max.y, point.y));
 		}
 		// sanity checks, in case of empty graph
 		if (min == null)
-			min = new Point2D.Double(0, 0);
+			min = Point.of(0, 0);
 		if (max == null)
-			max = new Point2D.Double(0, 0);
+			max = Point.of(0, 0);
 		// put results together
-		Point2D[] result = new Point2D[2];
+		Point[] result = new Point[2];
 		result[0] = min;
 		result[1] = max;
 		// case for just one node, make distinct
 		if (min.equals(max)) {
-			min.setLocation(min.getX() - 20, min.getY() - 20);
-			max.setLocation(max.getX() + 20, max.getY() + 20);
+			min = Point.of(min.x - 20, min.y - 20);
+			max = Point.of(max.x + 20, max.y + 20);
 		}
 		return result;
 	}
@@ -103,17 +104,17 @@ public class ImageWriterUtil<V, E> {
 		visviewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 
 		// place layout center in center of the view
-		Point2D[] calc = calcBounds();
-		Point2D min = calc[0];
-		Point2D max = calc[1];
+		Point[] calc = calcBounds();
+		Point min = calc[0];
+		Point max = calc[1];
 
 		if (min == null || max == null) {
 			return; // nothing to center on
 		}
 
 		Point2D screen_center = visviewer.getCenter();
-		Point2D layout_bounds = new Point2D.Double(max.getX() - min.getX(), max.getY() - min.getY());
-		Point2D layout_center = new Point2D.Double(screen_center.getX() - (layout_bounds.getX() / 2) - min.getX(), screen_center.getY() - (layout_bounds.getY() / 2) - min.getY());
+		Point2D layout_bounds = new Point2D.Double(max.x - min.x, max.y - min.y);
+		Point2D layout_center = new Point2D.Double(screen_center.getX() - (layout_bounds.getX() / 2) - min.x, screen_center.getY() - (layout_bounds.getY() / 2) - min.getY());
 		visviewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(layout_center.getX(), layout_center.getY());
 
 		// scale graph
@@ -144,7 +145,7 @@ public class ImageWriterUtil<V, E> {
 			int newHeight = Math.round(height * scaleResolution);
 
 			// set new size
-			visviewer.setSize(newWidth, newHeight);
+			visviewer.getComponent().setSize(newWidth, newHeight);
 			visviewer.setDoubleBuffered(false);
 			center();
 		}
@@ -157,7 +158,7 @@ public class ImageWriterUtil<V, E> {
 	 *            file to save to
 	 * @param format
 	 *            format to use
-	 * @param reloutionScaler
+	 * @param scaleResolution
 	 *            magnifier to scale resolution by
 	 */
 	public void writeImage(File file, String format, float scaleResolution) {
@@ -165,15 +166,15 @@ public class ImageWriterUtil<V, E> {
 		Color c = visviewer.getBackground();
 
 		// deselect nodes
-		Iterator<V> pickedVIt = visviewer.getPickedVertexState().getPicked().iterator();
-		while (pickedVIt.hasNext()) {
-			visviewer.getPickedVertexState().pick(pickedVIt.next(), false);
+		Iterator<V> SelectedVIt = visviewer.getSelectedVertexState().getSelected().iterator();
+		while (SelectedVIt.hasNext()) {
+			visviewer.getSelectedVertexState().select(SelectedVIt.next(), false);
 		}
 		// deselect edges
-		Iterator<E> pickedEIt = visviewer.getPickedEdgeState().getPicked().iterator();
-		while (pickedEIt.hasNext()) {
-			E picked = pickedEIt.next();
-			visviewer.getPickedEdgeState().pick(picked, false);
+		Iterator<E> SelectedEIt = visviewer.getSelectedEdgeState().getSelected().iterator();
+		while (SelectedEIt.hasNext()) {
+			E Selected = SelectedEIt.next();
+			visviewer.getSelectedEdgeState().select(Selected, false);
 		}
 
 		// get current setting for anti-aliasing
@@ -212,7 +213,7 @@ public class ImageWriterUtil<V, E> {
 				// TODO: Create method in EPS2D to toggle background
 				// painting
 				visviewer.setBackground(new Color(0.96f, 0.96f, 0.96f));
-				visviewer.printAll(g);
+				visviewer.getComponent().printAll(g);
 
 				visviewer.setDoubleBuffered(doubleBuff);
 				g.flush();
@@ -228,7 +229,7 @@ public class ImageWriterUtil<V, E> {
 						visviewer.setDoubleBuffered(true);
 						// only scale when required
 						if (scaleResolution != 1) {
-							visviewer.setSize(width, height);
+							visviewer.getComponent().setSize(width, height);
 							center();
 						}
 						// restore original setting
@@ -241,8 +242,8 @@ public class ImageWriterUtil<V, E> {
 			}
 		} else if (format.equalsIgnoreCase("graphml")) {
 			try {
-				// get JUNG graph of viewer
-				Graph<V, E> graph = visviewer.getGraphLayout().getGraph();
+				// get graph of viewer
+				Graph<V, E> graph = visviewer.getVisualizationModel().getGraph();
 
 				// setup writer and save to file
 				GraphMLWriter<V, E> writer = new GraphMLWriter<V, E>(graph);

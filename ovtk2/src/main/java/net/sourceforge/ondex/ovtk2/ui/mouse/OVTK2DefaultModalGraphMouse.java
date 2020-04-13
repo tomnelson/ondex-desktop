@@ -23,20 +23,6 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.ctc.wstx.io.CharsetNames;
 
-import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.annotations.AnnotatingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
-import edu.uci.ics.jung.visualization.annotations.Annotation;
-import edu.uci.ics.jung.visualization.annotations.AnnotationControls;
-import edu.uci.ics.jung.visualization.annotations.AnnotationManager;
-import edu.uci.ics.jung.visualization.annotations.AnnotationPaintable;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.ViewScalingControl;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.ovtk2.config.Config;
@@ -48,6 +34,13 @@ import net.sourceforge.ondex.ovtk2.ui.popup.VertexMenu;
 import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
 import net.sourceforge.ondex.ovtk2.util.xml.AnnotationXMLReader;
 import net.sourceforge.ondex.ovtk2.util.xml.AnnotationXMLWriter;
+import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
+import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
+import org.jungrapht.visualization.annotations.Annotation;
+import org.jungrapht.visualization.annotations.AnnotationManager;
+import org.jungrapht.visualization.annotations.AnnotationPaintable;
+import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.ScalingControl;
 
 /**
  * Class extends JUNGs DefaultModalGraphMouse to be able to override the picking
@@ -127,7 +120,7 @@ public class OVTK2DefaultModalGraphMouse extends AnnotatingModalGraphMouse<ONDEX
 				return;
 
 			// will contain de-serialised annotations
-			Set<Annotation> annos = new HashSet<Annotation>();
+			Set<Annotation> annos = new HashSet<>();
 
 			// configure XML input
 			System.setProperty("ondex.javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");

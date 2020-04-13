@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.swing.undo.UndoManager;
 
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXEntity;
 import net.sourceforge.ondex.core.ONDEXRelation;
@@ -20,6 +19,7 @@ import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeFillPaint;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeLabels;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraph;
+import org.jungrapht.visualization.VisualizationViewer;
 
 /**
  * Defines contract for accessing graph and visual properties central to

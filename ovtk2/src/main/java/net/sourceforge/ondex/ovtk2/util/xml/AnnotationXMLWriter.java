@@ -10,9 +10,7 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-
-import edu.uci.ics.jung.visualization.annotations.Annotation;
-import edu.uci.ics.jung.visualization.annotations.Annotation.Layer;
+import org.jungrapht.visualization.annotations.Annotation;
 
 /**
  * Turns a JUNG Annotation to XML.

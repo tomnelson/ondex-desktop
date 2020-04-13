@@ -9,11 +9,11 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.map.LazyMap;
 
-import edu.uci.ics.jung.visualization.picking.PickedInfo;
 import net.sourceforge.ondex.core.EvidenceType;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.custom.MultiColorNodePaint;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Provides a transformation from a given ONDEXConcept to a Color.
@@ -54,7 +54,7 @@ public class ONDEXNodeFillPaint implements Transformer<ONDEXConcept, Paint> {
 	/**
 	 * current PickedInfo
 	 */
-	private final PickedInfo<ONDEXConcept> pi;
+	private final SelectedState<ONDEXConcept> pi;
 
 	/**
 	 * current colour selection
@@ -67,7 +67,7 @@ public class ONDEXNodeFillPaint implements Transformer<ONDEXConcept, Paint> {
 	 * @param pi
 	 *            PickedInfo<ONDEXNode>
 	 */
-	public ONDEXNodeFillPaint(PickedInfo<ONDEXConcept> pi) {
+	public ONDEXNodeFillPaint(SelectedState<ONDEXConcept> pi) {
 		if (pi == null)
 			throw new IllegalArgumentException("PickedInfo instance must be non-null");
 		this.pi = pi;
@@ -136,7 +136,7 @@ public class ONDEXNodeFillPaint implements Transformer<ONDEXConcept, Paint> {
 	 * @return Color
 	 */
 	public Paint transform(ONDEXConcept node) {
-		if (pi.isPicked(node)) {
+		if (pi.isSelected(node)) {
 			return Config.nodePickedColor;
 		} else {
 			if (!colors.containsKey(node))

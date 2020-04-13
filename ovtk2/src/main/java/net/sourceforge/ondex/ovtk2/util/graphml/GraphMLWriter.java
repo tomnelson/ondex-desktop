@@ -15,13 +15,11 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.ConstantTransformer;
+import org.jgrapht.Graph;
 
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
 
 /**
+ * TODO: may want to use JGrapht export instead...
  * GraphML writer for JUNG graphs based on yFiles GraphML extensions.
  * 
  * @author taubertj
@@ -125,7 +123,7 @@ public class GraphMLWriter<V, E> {
 		edge_colours = new ConstantTransformer(Color.BLACK);
 
 		// decide if graph is directed
-		directed = !(graph instanceof UndirectedGraph);
+		directed = !(graph.getType().isDirected());
 	}
 
 	/**
@@ -223,12 +221,12 @@ public class GraphMLWriter<V, E> {
 			xml.writeAttribute("edgedefault", "undirected");
 
 		// write data for nodes
-		for (V v : graph.getVertices()) {
+		for (V v : graph.vertexSet()) {
 			writeNode(xml, v);
 		}
 
 		// write data for edges
-		for (E e : graph.getEdges()) {
+		for (E e : graph.edgeSet()) {
 			writeEdge(xml, e);
 		}
 
@@ -251,12 +249,13 @@ public class GraphMLWriter<V, E> {
 		String id = edge_ids.transform(e);
 
 		// get nodes connected by edge
-		Collection<V> vertices = graph.getIncidentVertices(e);
-
-		// possible hyper edge support
-		Pair<V> endpoints = new Pair<V>(vertices);
-		V v1 = endpoints.getFirst();
-		V v2 = endpoints.getSecond();
+//		Collection<V> vertices = graph.
+//				graph.getIncidentVertices(e);
+//
+//		 possible hyper edge support
+//		Pair<V> endpoints = new Pair<V>(vertices);
+		V v1 = graph.getEdgeSource(e);
+		V v2 = graph.getEdgeTarget(e);
 
 		// write edge element
 		xml.writeStartElement("edge");

@@ -43,10 +43,6 @@ import javax.swing.JColorChooser;
 
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.picking.PickedState;
-import edu.uci.ics.jung.visualization.renderers.Renderer;
-import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
 import net.sourceforge.ondex.core.Attribute;
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ConceptAccession;
@@ -66,6 +62,9 @@ import net.sourceforge.ondex.ovtk2.reusable_functions.DistinctColourMaker;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.tools.ondex.MdHelper;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * To be sorted, do not use.
@@ -403,7 +402,7 @@ public class ReportFunctions {
 
 	public static void labelPosition(OVTK2PropertiesAggregator viewer, String pos) {
 		VisualizationViewer vv = viewer.getVisualizationViewer();
-		edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position p = null;
+		Renderer.VertexLabel.Position p = null;
 		if (pos.equals("C")) {
 			p = Renderer.VertexLabel.Position.CNTR;
 		} else if (pos.equals("E")) {
@@ -417,8 +416,7 @@ public class ReportFunctions {
 		} else if (pos.equals("A")) {
 			p = Renderer.VertexLabel.Position.AUTO;
 		}
-		viewer.getVisualizationViewer().getRenderer().getVertexLabelRenderer().setPosition(p);
-		;
+		viewer.getVisualizationViewer().getRenderContext().setVertexLabelPosition(p);
 		viewer.getVisualizationViewer().repaint();
 	}
 
@@ -669,8 +667,8 @@ public class ReportFunctions {
 		if (color == null)
 			return;
 		System.err.println(color);
-		PickedState<ONDEXConcept> state = viewer.getVisualizationViewer().getPickedVertexState();
-		Set<ONDEXConcept> set = state.getPicked();
+		SelectedState<ONDEXConcept> state = viewer.getVisualizationViewer().getSelectedVertexState();
+		Set<ONDEXConcept> set = state.getSelected();
 		for (ONDEXConcept n : set) {
 			ONDEXConcept context = graph.getConcept(n.getId());
 			Annotation.setColor(viewer, context, color);
@@ -735,8 +733,8 @@ public class ReportFunctions {
 		if (color == null)
 			return;
 		System.err.println(color);
-		PickedState<ONDEXConcept> state = viewer.getVisualizationViewer().getPickedVertexState();
-		Set<ONDEXConcept> set = state.getPicked();
+		SelectedState<ONDEXConcept> state = viewer.getVisualizationViewer().getSelectedVertexState();
+		Set<ONDEXConcept> set = state.getSelected();
 		if (set.size() == 0)
 			return;
 		ONDEXConcept seed = graph.getConcept(set.iterator().next().getId());

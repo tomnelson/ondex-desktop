@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.visualization.picking.PickedInfo;
 import net.sourceforge.ondex.core.RelationType;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Provides a transformation from a given ONDEXMetaRelation to a Color.
@@ -27,7 +27,7 @@ public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, P
 	private ONDEXJUNGGraph graph = null;
 
 	// current PickedInfo
-	private PickedInfo<ONDEXMetaRelation> pi = null;
+	private SelectedState<ONDEXMetaRelation> pi = null;
 
 	/**
 	 * Initialises the colours for the edges in the graph.
@@ -35,7 +35,7 @@ public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, P
 	 * @param jung
 	 *            ONDEXJUNGGraph
 	 */
-	public ONDEXMetaRelationColors(ONDEXJUNGGraph jung, PickedInfo<ONDEXMetaRelation> pi) {
+	public ONDEXMetaRelationColors(ONDEXJUNGGraph jung, SelectedState<ONDEXMetaRelation> pi) {
 		if (pi == null)
 			throw new IllegalArgumentException("PickedInfo instance must be non-null");
 		this.pi = pi;
@@ -55,7 +55,7 @@ public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, P
 	 * @return Colour
 	 */
 	public Color transform(ONDEXMetaRelation edge) {
-		if (pi.isPicked(edge)) {
+		if (pi.isSelected(edge)) {
 			return Config.nodePickedColor;
 		} else {
 			updateColor(edge);
@@ -90,7 +90,7 @@ public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, P
 	 * 
 	 * @param edge
 	 *            ONDEXMetaRelation
-	 * @param color
+	 * @param c
 	 *            Color
 	 */
 	public void updateColor(ONDEXMetaRelation edge, Color c) {

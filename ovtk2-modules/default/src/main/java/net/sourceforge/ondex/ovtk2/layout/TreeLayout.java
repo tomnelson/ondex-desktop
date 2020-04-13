@@ -31,11 +31,12 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.uci.ics.jung.graph.Graph;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.tools.threading.monitoring.Monitorable;
+import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 
 /**
  * TreeLayout adapted from the JUNG2 library.
@@ -160,9 +161,11 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 			// check selection of edge direction
 			Collection<ONDEXConcept> children = null;
 			if (reversed)
-				children = graph.getPredecessors(v);
+				children = Graphs.predecessorListOf(graph, v);
+//						graph.getPredecessors(v);
 			else
-				children = graph.getSuccessors(v);
+				children = Graphs.successorListOf(graph, v);
+//						graph.getSuccessors(v);
 
 			// get new x position from children
 			for (ONDEXConcept element : children) {
@@ -195,9 +198,9 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 			// check selection of edge direction
 			Collection<ONDEXConcept> children = null;
 			if (reversed)
-				children = graph.getPredecessors(v);
+				children = Graphs.predecessorListOf(graph, v);
 			else
-				children = graph.getSuccessors(v);
+				children = Graphs.successorListOf(graph, v);
 
 			// check dimension for children
 			int childrenNum = children.size();
@@ -238,9 +241,9 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 			if (!seen.contains(current)) {
 				// check selection of edge direction
 				if (reversed)
-					stack.addAll(graph.getPredecessors(current));
+					stack.addAll(Graphs.predecessorListOf(graph, current));
 				else
-					stack.addAll(graph.getSuccessors(current));
+					stack.addAll(Graphs.successorListOf(graph, current));
 				// check dimension for children
 				size = distX;
 				size = Math.max(0, size - distX);
@@ -278,17 +281,17 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 		// check selection of edge direction
 		Collection<ONDEXConcept> parents = null;
 		if (reversed)
-			parents = graph.getPredecessors(p);
+			parents = Graphs.predecessorListOf(graph, p);
 		else
-			parents = graph.getSuccessors(p);
+			parents = Graphs.successorListOf(graph, p);
 		for (ONDEXConcept c : parents) {
 
 			// check selection of edge direction
 			Collection<ONDEXConcept> children = null;
 			if (reversed)
-				children = graph.getPredecessors(c);
+				children = Graphs.predecessorListOf(graph, c);
 			else
-				children = graph.getSuccessors(c);
+				children = Graphs.successorListOf(graph, c);
 
 			if (children.size() == 0) {
 				v.add(c);
@@ -311,17 +314,17 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 		// check selection of edge direction
 		Collection<ONDEXConcept> parents = null;
 		if (reversed)
-			parents = graph.getPredecessors(v);
+			parents = Graphs.predecessorListOf(graph, v);
 		else
-			parents = graph.getSuccessors(v);
+			parents = Graphs.successorListOf(graph, v);
 		for (ONDEXConcept c : parents) {
 
 			// check selection of edge direction
 			Collection<ONDEXConcept> children = null;
 			if (reversed)
-				children = graph.getPredecessors(c);
+				children = Graphs.predecessorListOf(graph, c);
 			else
-				children = graph.getSuccessors(c);
+				children = Graphs.successorListOf(graph, c);
 
 			// base: at leaf node, no more children
 			if (children.size() == 0) {
@@ -421,12 +424,12 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 	private Collection<ONDEXConcept> getRoots(
 			Graph<ONDEXConcept, ONDEXRelation> g) {
 		Set<ONDEXConcept> roots = new HashSet<ONDEXConcept>();
-		for (ONDEXConcept n : g.getVertices()) {
+		for (ONDEXConcept n : g.vertexSet()) {
 			// check selection of edge direction
-			if (reversed && g.getSuccessorCount(n) == 0) {
+			if (reversed && g.outDegreeOf(n) == 0) {
 				roots.add(n);
 			}
-			if (!reversed && g.getPredecessorCount(n) == 0) {
+			if (!reversed && g.inDegreeOf(n) == 0) {
 				roots.add(n);
 			}
 		}
@@ -436,13 +439,13 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 	/**
 	 * This is not an incremental layout.
 	 * 
-	 * @see edu.uci.ics.jung.visualization.Layout#incrementsAreDone()
+//	 * @see edu.uci.ics.jung.visualization.Layout#incrementsAreDone()
 	 */
 	public boolean incrementsAreDone() {
 		return true;
 	}
 
-	@Override
+//	@Override
 	public void initialize() {
 
 		cancelled = false;

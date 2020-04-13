@@ -48,7 +48,6 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.map.LazyMap;
 
-import edu.uci.ics.jung.visualization.VisualizationModel;
 import net.sourceforge.ondex.algorithm.graphquery.GraphTraverser;
 import net.sourceforge.ondex.algorithm.graphquery.StateMachine;
 import net.sourceforge.ondex.algorithm.graphquery.exceptions.InvalidFileException;
@@ -72,6 +71,7 @@ import net.sourceforge.ondex.ovtk2.layout.GDSPositionLayout;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.util.IntegerStringWrapper;
+import org.jungrapht.visualization.VisualizationModel;
 
 /**
  * Filter for the Poplar data.
@@ -413,7 +413,7 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 				// now set concepts that become unconnected to invisible
 				for (ONDEXConcept c : graph.getVertices()) {
-					if (graph.getNeighborCount(c) == 0) {
+					if (graph.degreeOf(c) == 0) {
 						graph.setVisibility(c, false);
 						invisibleConcepts.add(c);
 					}
@@ -425,7 +425,7 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 				toggleSearchResults = true;
 			}
 
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();
 			edit.end();
 			viewer.getUndoManager().addEdit(edit);
 			desktop.getOVTK2Menu().updateUndoRedo(viewer);
@@ -492,7 +492,7 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 				// propagate change to viewer
 				VisualizationModel<ONDEXConcept, ONDEXRelation> model = viewer
-						.getVisualizationViewer().getModel();
+						.getVisualizationViewer().getVisualizationModel();
 				model.setGraphLayout(layout);
 				model.fireStateChanged();
 				viewer.center();
