@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.collections15.Factory;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.map.LazyMap;
+import java.util.function.Function;
 
 import net.sourceforge.ondex.core.EvidenceType;
 import net.sourceforge.ondex.core.ONDEXRelation;
@@ -21,7 +18,7 @@ import org.jungrapht.visualization.selection.SelectedState;
  * @author taubertj
  * @author Matthew Pocock
  */
-public class ONDEXEdgeColors implements Transformer<ONDEXRelation, Paint> {
+public class ONDEXEdgeColors implements Function<ONDEXRelation, Paint> {
 
 	public static final String ET = "et";
 
@@ -53,12 +50,13 @@ public class ONDEXEdgeColors implements Transformer<ONDEXRelation, Paint> {
 		if (pi == null)
 			throw new IllegalArgumentException("PickedInfo instance must be non-null");
 		this.pi = pi;
-		this.colors = LazyMap.decorate(new HashMap<ONDEXRelation, Paint>(), new Factory<Paint>() {
-			@Override
-			public Paint create() {
-				return Config.defaultColor;
-			}
-		});
+		this.colors = new HashMap<>();
+//				LazyMap.decorate(new HashMap<ONDEXRelation, Paint>(), new Factory<Paint>() {
+//			@Override
+//			public Paint create() {
+//				return Config.defaultColor;
+//			}
+//		});
 
 		// get colouring strategy from visual.xml
 		String s = Config.visual.getProperty(GRAPH_COLORING_RELATION_STRATEGY);
@@ -109,13 +107,14 @@ public class ONDEXEdgeColors implements Transformer<ONDEXRelation, Paint> {
 	 *            ONDEXRelation
 	 * @return Paint
 	 */
-	public Paint transform(ONDEXRelation edge) {
+	@Override
+	public Paint apply(ONDEXRelation edge) {
 		if (pi.isSelected(edge)) {
 			return Config.edgePickedColor;
 		} else {
 			if (!colors.containsKey(edge))
 				updateColor(edge);
-			return colors.get(edge);
+			return colors.getOrDefault(edge, Config.defaultColor);
 		}
 	}
 

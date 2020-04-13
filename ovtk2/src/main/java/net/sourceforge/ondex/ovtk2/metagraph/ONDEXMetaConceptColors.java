@@ -4,15 +4,14 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.util.Hashtable;
 import java.util.Map;
-
-import org.apache.commons.collections15.Transformer;
+import java.util.function.Function;
 
 import net.sourceforge.ondex.core.ConceptClass;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
 import org.jungrapht.visualization.selection.SelectedState;
 
-public class ONDEXMetaConceptColors implements Transformer<ONDEXMetaConcept, Paint> {
+public class ONDEXMetaConceptColors implements Function<ONDEXMetaConcept, Paint> {
 
 	// ####FIELDS####
 
@@ -54,7 +53,8 @@ public class ONDEXMetaConceptColors implements Transformer<ONDEXMetaConcept, Pai
 	 *            ONDEXMetaRelation
 	 * @return Colour
 	 */
-	public Color transform(ONDEXMetaConcept node) {
+	@Override
+	public Color apply(ONDEXMetaConcept node) {
 		if (pi.isSelected(node)) {
 			return Config.nodePickedColor;
 		} else {

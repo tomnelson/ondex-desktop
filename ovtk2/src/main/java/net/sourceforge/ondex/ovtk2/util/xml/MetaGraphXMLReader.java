@@ -1,16 +1,14 @@
 package net.sourceforge.ondex.ovtk2.util.xml;
 
-import java.awt.geom.Point2D;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaConcept;
+import net.sourceforge.ondex.ovtk2.ui.OVTK2MetaGraph;
+import org.codehaus.stax2.XMLStreamReader2;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-
-import org.codehaus.stax2.XMLStreamReader2;
-
-import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaConcept;
-import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaRelation;
-import net.sourceforge.ondex.ovtk2.ui.OVTK2MetaGraph;
-import org.jungrapht.visualization.layout.model.LayoutModel;
+import java.awt.geom.Point2D;
 
 /**
  * Translates XML settings for MetaGraph appearance.
@@ -52,10 +50,10 @@ public class MetaGraphXMLReader {
 					double x = xmlr.getElementAsDouble();
 					xmlr.nextTag();
 					double y = xmlr.getElementAsDouble();
-					Point2D p = new Point2D.Double(x, y);
-					for (ONDEXMetaConcept mc : layout.getGraph().getVertices()) {
+					Point p = Point.of(x, y);
+					for (ONDEXMetaConcept mc : layout.getGraph().vertexSet()) {
 						if (mc.getConceptClass().getId().equals(id)) {
-							layout.setLocation(mc, p);
+							layout.set(mc, p);
 							break;
 						}
 					}

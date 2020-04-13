@@ -28,6 +28,7 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.ui.menu.actions.ViewMenuAction;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaConceptMenu.MetaConceptVisibilityItem;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaRelationMenu.MetaRelationVisibilityItem;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
 
 /**
  * Represents a metagraph view consisting of ConceptClasses and RelationType ids
@@ -171,7 +172,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 				}
 			}
 			// TODO: Update colour interface
-			mainviewer.getVisualizationViewer().getModel().fireStateChanged();
+			mainviewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();
 		}
 
 		// repaint ourself, just in case
@@ -188,13 +189,13 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 		for (ONDEXRelation r : graph.getRelationsOfRelationType(rt)) {
 			ConceptClass from = r.getFromConcept().getOfType();
 			ConceptClass to = r.getToConcept().getOfType();
-			betweenCC.add(new Pair<ConceptClass>(from, to));
+			betweenCC.add(Pair.of(from, to));
 		}
 		// create meta relation for each pair
 		for (Pair<ConceptClass> ccPair : betweenCC) {
-			ONDEXMetaConcept from = new ONDEXMetaConcept(graph, ccPair.getFirst());
-			ONDEXMetaConcept to = new ONDEXMetaConcept(graph, ccPair.getSecond());
-			this.addEdge(new ONDEXMetaRelation(graph, rt, ccPair), new Pair<ONDEXMetaConcept>(from, to));
+			ONDEXMetaConcept from = new ONDEXMetaConcept(graph, ccPair.first);
+			ONDEXMetaConcept to = new ONDEXMetaConcept(graph, ccPair.second);
+			this.addEdge(new ONDEXMetaRelation(graph, rt, ccPair), Pair.of(from, to));
 		}
 		this.fireStateChange();
 	}
@@ -245,7 +246,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * @return true if successful
 	 */
 	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2, EdgeType edgeType) {
-		return addEdge(e, new Pair<ONDEXMetaConcept>(v1, v2), edgeType);
+		return addEdge(e, Pair.of(v1, v2), edgeType);
 	}
 
 	/**

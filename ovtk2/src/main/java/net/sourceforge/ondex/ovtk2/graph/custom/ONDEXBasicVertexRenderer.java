@@ -22,9 +22,10 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.AbstractVertexRenderer;
+import org.jungrapht.visualization.renderers.HeavyweightVertexRenderer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
-public class ONDEXBasicVertexRenderer extends AbstractVertexRenderer<ONDEXConcept, ONDEXRelation> {
+public class ONDEXBasicVertexRenderer extends HeavyweightVertexRenderer<ONDEXConcept, ONDEXRelation> {
 
 	ONDEXJUNGGraph graph;
 
@@ -81,12 +82,8 @@ public class ONDEXBasicVertexRenderer extends AbstractVertexRenderer<ONDEXConcep
 			// transform the vertex shape with xtransform
 			shape = xform.createTransformedShape(shape);
 
-			vertexHit = vertexHit(rc, shape);
-			// rc.getViewTransformer().transform(shape).intersects(deviceRectangle);
+			paintShapeForVertex(rc, v, shape);
 
-			if (vertexHit) {
-				paintShapeForVertex(rc, v, shape);
-			}
 		}
 	}
 

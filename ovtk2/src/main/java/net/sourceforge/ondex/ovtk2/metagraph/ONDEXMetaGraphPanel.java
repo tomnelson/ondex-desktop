@@ -34,6 +34,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 
 public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, ChangeListener, ComponentListener {
 
@@ -45,6 +46,8 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 
 	// MetaGraph layout used
 	private KKLayoutAlgorithm<ONDEXMetaConcept> layout = null;
+
+	private LayoutModel<ONDEXMetaConcept> layoutModel;
 
 	// display metagraph
 	private ONDEXMetaGraph meta = null;
@@ -161,7 +164,7 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 		ONDEXJUNGGraph jung = viewer.getONDEXJUNGGraph();
 
 		// new metagraph viewer
-		layout = new KKLayout<ONDEXMetaConcept, ONDEXMetaRelation>(meta);
+		layout = new KKLayoutAlgorithm<ONDEXMetaConcept>(meta);
 		visviewer = new VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation>(layout, preferredSize);
 		visviewer.setDoubleBuffered(true);
 		visviewer.setBackground(Color.white);

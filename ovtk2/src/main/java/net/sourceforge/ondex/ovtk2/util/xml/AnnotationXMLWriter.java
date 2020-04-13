@@ -254,7 +254,7 @@ public class AnnotationXMLWriter {
 	 * @param layer
 	 * @throws XMLStreamException
 	 */
-	protected static void write(XMLStreamWriter2 xmlw, Layer layer) throws XMLStreamException {
+	protected static void write(XMLStreamWriter2 xmlw, Annotation.Layer layer) throws XMLStreamException {
 
 		xmlw.writeStartElement(LAYER);
 

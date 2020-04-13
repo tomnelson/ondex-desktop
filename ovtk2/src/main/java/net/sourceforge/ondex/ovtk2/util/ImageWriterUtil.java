@@ -1,5 +1,19 @@
 package net.sourceforge.ondex.ovtk2.util;
 
+import net.sf.epsgraphics.ColorMode;
+import net.sf.epsgraphics.EpsGraphics;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
+import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
+import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
+import net.sourceforge.ondex.ovtk2.util.graphml.GraphMLWriter;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,23 +30,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageWriterSpi;
-
-import net.sf.epsgraphics.ColorMode;
-import net.sf.epsgraphics.EpsGraphics;
-import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
-import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
-import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
-import net.sourceforge.ondex.ovtk2.util.graphml.GraphMLWriter;
-import org.jgrapht.Graph;
-import org.jungrapht.visualization.MultiLayerTransformer;
-import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
-
-import static org.jungrapht.visualization.MultiLayerTransformer.*;
+import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
 
 /**
  * @author hindlem, peschr, taubertj
@@ -114,7 +112,8 @@ public class ImageWriterUtil<V, E> {
 
 		Point2D screen_center = visviewer.getCenter();
 		Point2D layout_bounds = new Point2D.Double(max.x - min.x, max.y - min.y);
-		Point2D layout_center = new Point2D.Double(screen_center.getX() - (layout_bounds.getX() / 2) - min.x, screen_center.getY() - (layout_bounds.getY() / 2) - min.getY());
+		Point2D layout_center = new Point2D.Double(screen_center.getX() - (layout_bounds.getX() / 2) - min.x,
+				screen_center.getY() - (layout_bounds.getY() / 2) - min.y);
 		visviewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(layout_center.getX(), layout_center.getY());
 
 		// scale graph
@@ -247,10 +246,10 @@ public class ImageWriterUtil<V, E> {
 
 				// setup writer and save to file
 				GraphMLWriter<V, E> writer = new GraphMLWriter<V, E>(graph);
-				writer.setVertexFillTransformer(visviewer.getRenderContext().getVertexFillPaintTransformer());
-				writer.setEdgeColourTransformer(visviewer.getRenderContext().getEdgeDrawPaintTransformer());
-				writer.setVertexLabelTransformer(visviewer.getRenderContext().getVertexLabelTransformer());
-				writer.setEdgeLabelTransformer(visviewer.getRenderContext().getEdgeLabelTransformer());
+				writer.setVertexFillTransformer(visviewer.getRenderContext().getVertexFillPaintFunction());
+				writer.setEdgeColourTransformer(visviewer.getRenderContext().getEdgeDrawPaintFunction());
+				writer.setVertexLabelTransformer(visviewer.getRenderContext().getVertexLabelFunction());
+				writer.setEdgeLabelTransformer(visviewer.getRenderContext().getEdgeLabelFunction());
 
 				writer.save(new BufferedWriter(new FileWriter(file)));
 
@@ -294,7 +293,7 @@ public class ImageWriterUtil<V, E> {
 
 				// actually paint graph
 				Graphics2D graphics = bi.createGraphics();
-				visviewer.paintAll(graphics);
+				visviewer.getComponent().paintAll(graphics);
 				graphics.dispose();
 
 				// write to image
@@ -308,7 +307,7 @@ public class ImageWriterUtil<V, E> {
 				visviewer.setDoubleBuffered(true);
 				// only scale when required
 				if (scaleResolution != 1) {
-					visviewer.setSize(width, height);
+					visviewer.getComponent().setSize(width, height);
 					center();
 				}
 			}

@@ -124,14 +124,14 @@ public interface OVTK2PropertiesAggregator {
 	 * 
 	 * @return Set<ONDEXEdge>
 	 */
-	public Set<ONDEXRelation> getPickedEdges();
+	public Set<ONDEXRelation> getSelectedEdges();
 
 	/**
 	 * Returns a set with picked ONDEXNodes.
 	 * 
 	 * @return Set<ONDEXNode>
 	 */
-	public Set<ONDEXConcept> getPickedNodes();
+	public Set<ONDEXConcept> getSelectedNodes();
 
 	/**
 	 * Returns title of this viewer

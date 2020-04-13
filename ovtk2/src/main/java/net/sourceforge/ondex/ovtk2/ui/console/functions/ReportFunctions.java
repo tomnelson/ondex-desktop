@@ -36,12 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JColorChooser;
-
-import org.apache.commons.collections15.Transformer;
 
 import net.sourceforge.ondex.core.Attribute;
 import net.sourceforge.ondex.core.AttributeName;
@@ -64,6 +63,7 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.tools.ondex.MdHelper;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
 import org.jungrapht.visualization.selection.SelectedState;
 
 /**
@@ -487,9 +487,9 @@ public class ReportFunctions {
 
 	public static void shapeAsLabel(OVTK2PropertiesAggregator viewer) {
 		VisualizationViewer vv = viewer.getVisualizationViewer();
-		viewer.getVisualizationViewer().getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+		viewer.getVisualizationViewer().getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 		;
-		vv.getRenderContext().setVertexShapeTransformer(new VertexLabelAsShapeRenderer<String, Number>(vv.getRenderContext()));
+		vv.getRenderContext().setVertexShapeFunction(new VertexLabelAsShapeRenderer<String, Number>(vv.getVisualizationModel(), vv.getRenderContext()));
 		viewer.getVisualizationViewer().repaint();
 	}
 
@@ -499,17 +499,14 @@ public class ReportFunctions {
 		final AttributeName an = graph.getMetaData().getAttributeName(gdsArg);
 
 		final Font newFont = new Font("Calibri", Font.BOLD, (int) maxSize);
-		viewer.getVisualizationViewer().getRenderContext().setVertexFontTransformer(new Transformer<ONDEXConcept, Font>() {
-			@Override
-			public Font transform(ONDEXConcept n) {
-				ONDEXConcept c = graph.getConcept(n.getId());
-				Attribute attribute = c.getAttribute(an);
-				if (attribute != null) {
-					Float size = (float) (((Double) attribute.getValue() / (Double) gdsMax) * (maxSize - minSize) + minSize);
-					return newFont.deriveFont(size);
-				}
-				return newFont;
+		viewer.getVisualizationViewer().getRenderContext().setVertexFontFunction((Function<ONDEXConcept, Font>) n -> {
+			ONDEXConcept c = graph.getConcept(n.getId());
+			Attribute attribute = c.getAttribute(an);
+			if (attribute != null) {
+				Float size = (float) (((Double) attribute.getValue() / (Double) gdsMax) * (maxSize - minSize) + minSize);
+				return newFont.deriveFont(size);
 			}
+			return newFont;
 		});
 		viewer.getVisualizationViewer().repaint();
 	}
@@ -518,19 +515,14 @@ public class ReportFunctions {
 		VisualizationViewer vv = viewer.getVisualizationViewer();
 		final ONDEXGraph graph = viewer.getONDEXJUNGGraph();
 		final Font newFont = new Font("Calibri", Font.BOLD, size);
-		viewer.getVisualizationViewer().getRenderContext().setVertexFontTransformer(new Transformer<ONDEXConcept, Font>() {
-			@Override
-			public Font transform(ONDEXConcept n) {
-				return newFont;
-			}
-		});
+		viewer.getVisualizationViewer().getRenderContext().setVertexFontFunction(n -> newFont);
 		viewer.getVisualizationViewer().repaint();
 	}
 
 	public static void showByContext(OVTK2PropertiesAggregator viewer, String conceptClass) {
 		ONDEXJUNGGraph graph = viewer.getONDEXJUNGGraph();
-		PickedState<ONDEXConcept> state = viewer.getVisualizationViewer().getPickedVertexState();
-		Set<ONDEXConcept> set = state.getPicked();
+		SelectedState<ONDEXConcept> state = viewer.getVisualizationViewer().getSelectedVertexState();
+		Set<ONDEXConcept> set = state.getSelected();
 		Set<ONDEXConcept> toShow = new HashSet<ONDEXConcept>();
 		DistinctColourMaker dc = new DistinctColourMaker(21);
 		Map<ONDEXConcept, Color> colors = new HashMap<ONDEXConcept, Color>();

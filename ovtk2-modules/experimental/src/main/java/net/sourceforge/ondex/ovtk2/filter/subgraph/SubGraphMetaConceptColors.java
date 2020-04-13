@@ -2,8 +2,7 @@ package net.sourceforge.ondex.ovtk2.filter.subgraph;
 
 import java.awt.Color;
 import java.awt.Paint;
-
-import org.apache.commons.collections15.Transformer;
+import java.util.function.Function;
 
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaConcept;
 import org.jungrapht.visualization.selection.SelectedState;
@@ -15,7 +14,7 @@ import org.jungrapht.visualization.selection.SelectedState;
  * 
  */
 public class SubGraphMetaConceptColors implements
-		Transformer<ONDEXMetaConcept, Paint> {
+		Function<ONDEXMetaConcept, Paint> {
 
 	// ####FIELDS####
 
@@ -46,7 +45,8 @@ public class SubGraphMetaConceptColors implements
 	 *            ONDEXMetaConcept
 	 * @return Colour
 	 */
-	public Color transform(ONDEXMetaConcept node) {
+	@Override
+	public Color apply(ONDEXMetaConcept node) {
 		if (pi.isSelected(node))
 			return Color.YELLOW;
 		if (node.isVisible())

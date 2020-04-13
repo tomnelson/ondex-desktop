@@ -34,17 +34,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.undo.StateEdit;
 
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
-import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.picking.PickedState;
-import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import net.sourceforge.ondex.InvalidPluginArgumentException;
 import net.sourceforge.ondex.ONDEXPluginArguments;
 import net.sourceforge.ondex.core.ConceptClass;
@@ -67,6 +56,20 @@ import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaRelationStrokes;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Desktop;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
+import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.VisualizationScrollPane;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.selection.SelectedState;
+
+import static org.jungrapht.visualization.MultiLayerTransformer.*;
+import static org.jungrapht.visualization.control.ModalGraphMouse.*;
 
 /**
  * Filter to extract specified subgraphs.
@@ -94,7 +97,7 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 	private VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation> visviewer = null;
 
 	// MetaGraph layout used
-	private KKLayout<ONDEXMetaConcept, ONDEXMetaRelation> layout = null;
+	private KKLayoutAlgorithm<ONDEXMetaConcept> layout = null;
 
 	// rendering hints
 	private Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>();
@@ -218,12 +221,12 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 
 		// get selection from graph
 		List<Integer> selected = new ArrayList<Integer>();
-		for (ONDEXConcept node : viewer.getPickedNodes()) {
+		for (ONDEXConcept node : viewer.getSelectedNodes()) {
 			if (indices.containsKey(node)) {
 				ConceptClass cc = node.getOfType();
 				for (ONDEXMetaConcept mc : meta.getVertices()) {
 					if (mc.getMetaData().equals(cc)) {
-						visviewer.getPickedVertexState().pick(mc, true);
+						visviewer.getSelectedVertexState().select(mc, true);
 						break;
 					}
 				}
@@ -255,32 +258,31 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 				.createTitledBorder("Root concept selection"));
 
 		// new meta graph viewer
-		layout = new KKLayout<ONDEXMetaConcept, ONDEXMetaRelation>(meta);
-		visviewer = new VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation>(
-				layout, preferredSize);
+		layout = new KKLayoutAlgorithm<>(meta);
+		visviewer = VisualizationViewer.<ONDEXMetaConcept, ONDEXMetaRelation>builder()
+				.viewSize(preferredSize).layoutAlgorithm(layout).build();
 		visviewer.setDoubleBuffered(true);
 		visviewer.setBackground(Color.white);
 
 		// set label position and label transformer
-		visviewer.getRenderer().getVertexLabelRenderer()
-				.setPosition(Position.AUTO);
-		visviewer.getRenderContext().setVertexLabelTransformer(
+		visviewer.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
+		visviewer.getRenderContext().setVertexLabelFunction(
 				new ONDEXMetaConceptLabels(graph));
-		visviewer.getRenderContext().setEdgeLabelTransformer(
+		visviewer.getRenderContext().setEdgeLabelFunction(
 				new ONDEXMetaRelationLabels(graph));
 
 		// set visible attribute renderer
-		visviewer.getRenderContext().setEdgeDrawPaintTransformer(
-				new SubGraphMetaRelationColors(visviewer.getPickedEdgeState()));
-		visviewer.getRenderContext().setVertexShapeTransformer(
+		visviewer.getRenderContext().setEdgeDrawPaintFunction(
+				new SubGraphMetaRelationColors(visviewer.getSelectedEdgeState()));
+		visviewer.getRenderContext().setVertexShapeFunction(
 				new ONDEXMetaConceptShapes(graph));
 		visviewer.getRenderContext()
-				.setVertexFillPaintTransformer(
+				.setVertexFillPaintFunction(
 						new SubGraphMetaConceptColors(visviewer
-								.getPickedVertexState()));
-		visviewer.getRenderContext().setEdgeArrowPredicate(
-				new ONDEXMetaRelationArrows(graph));
-		visviewer.getRenderContext().setEdgeStrokeTransformer(
+								.getSelectedVertexState()));
+//		visviewer.getRenderContext().setEdgeArrowPredicate(
+//				new ONDEXMetaRelationArrows(graph));
+		visviewer.getRenderContext().setEdgeStrokeFunction(
 				new ONDEXMetaRelationStrokes(graph));
 
 		// set anti-aliasing painting on
@@ -299,14 +301,14 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 		// standard mouse support
 		DefaultModalGraphMouse<ONDEXMetaConcept, ONDEXMetaRelation> graphMouse = new DefaultModalGraphMouse<ONDEXMetaConcept, ONDEXMetaRelation>();
 		graphMouse
-				.add(new PickingGraphMousePlugin<ONDEXMetaConcept, ONDEXMetaRelation>(
-						InputEvent.BUTTON1_MASK, InputEvent.BUTTON3_MASK));
+				.add(new SelectingGraphMousePlugin<ONDEXMetaConcept, ONDEXMetaRelation>(
+						InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.BUTTON3_DOWN_MASK));
 
 		visviewer.setGraphMouse(graphMouse);
 		visviewer.addKeyListener(graphMouse.getModeKeyListener());
 
 		// zoom pane and mouse menu in the corner
-		GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visviewer);
+		VisualizationScrollPane scrollPane = new VisualizationScrollPane(visviewer);
 		JMenuBar menu = new JMenuBar();
 		menu.add(graphMouse.getModeMenu());
 		scrollPane.setCorner(menu);
@@ -326,9 +328,9 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (ONDEXMetaConcept mc : meta.getVertices())
-					visviewer.getPickedVertexState().pick(mc, true);
+					visviewer.getSelectedVertexState().select(mc, true);
 				for (ONDEXMetaRelation mr : meta.getEdges())
-					visviewer.getPickedEdgeState().pick(mr, true);
+					visviewer.getSelectedEdgeState().select(mr, true);
 			}
 		});
 
@@ -360,10 +362,10 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 		Point2D[] result = new Point2D[2];
 		Point2D min = null;
 		Point2D max = null;
-		Iterator<ONDEXMetaConcept> it = layout.getGraph().getVertices()
+		Iterator<ONDEXMetaConcept> it = layoutModel.getGraph().getVertices()
 				.iterator();
 		while (it.hasNext()) {
-			Point2D point = layout.transform(it.next());
+			Point2D point = layoutModel.apply(it.next());
 			if (min == null) {
 				min = new Point2D.Double(0, 0);
 				min.setLocation(point);
@@ -471,8 +473,8 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 		Set<ONDEXRelation> relations = null;
 
 		// get user choices
-		PickedState<ONDEXMetaConcept> ccPI = visviewer.getPickedVertexState();
-		PickedState<ONDEXMetaRelation> rtPI = visviewer.getPickedEdgeState();
+		SelectedState<ONDEXMetaConcept> ccPI = visviewer.getSelectedVertexState();
+		SelectedState<ONDEXMetaRelation> rtPI = visviewer.getSelectedEdgeState();
 
 		// seed nodes from viewer start subgraph at each of them
 		for (Object o : nodeSelection.getSelectedValuesList ()) {
@@ -489,7 +491,7 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 			// graph traversal to identify selected concept classes
 			for (ONDEXMetaConcept mc : meta.getVertices()) {
 				// found root, make sure its still picked
-				if (mc.getMetaData().equals(rootCC) && ccPI.isPicked(mc)) {
+				if (mc.getMetaData().equals(rootCC) && ccPI.isSelected(mc)) {
 					seenConcepts = new HashSet<ONDEXMetaConcept>();
 					seenRelations = new HashSet<ONDEXMetaRelation>();
 					traverseGraph(fa, ccPI, rtPI, mc);
@@ -585,8 +587,8 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 	 *            ONDEXMetaConcept where to start
 	 */
 	private void traverseGraph(ONDEXPluginArguments fa,
-			PickedState<ONDEXMetaConcept> ccPI,
-			PickedState<ONDEXMetaRelation> rtPI, ONDEXMetaConcept root)
+			SelectedState<ONDEXMetaConcept> ccPI,
+							   SelectedState<ONDEXMetaRelation> rtPI, ONDEXMetaConcept root)
 			throws InvalidPluginArgumentException {
 
 		if (shortest.isSelected())
@@ -617,14 +619,14 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 					if (!seenRelations.contains(outRel)) {
 						if (shortest.isSelected())
 							seenRelations.add(outRel);
-						if (rtPI.isPicked(outRel)
+						if (rtPI.isSelected(outRel)
 								&& depth + 1 < Filter.levelsCC.length)
 							fa.addOption(Filter.levelsRT[depth + 1], outRel
 									.getMetaData().getId());
 
 						ONDEXMetaConcept to = meta.getDest(outRel);
 						// prevent self loop
-						if (!seenConcepts.contains(to) && ccPI.isPicked(to)) {
+						if (!seenConcepts.contains(to) && ccPI.isSelected(to)) {
 							if (shortest.isSelected())
 								seenConcepts.add(to);
 							queue.add(new Tuple<ONDEXMetaConcept, Integer>(to,
@@ -638,14 +640,14 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 					if (!seenRelations.contains(inRel)) {
 						if (shortest.isSelected())
 							seenRelations.add(inRel);
-						if (rtPI.isPicked(inRel)
+						if (rtPI.isSelected(inRel)
 								&& depth + 1 < Filter.levelsCC.length)
 							fa.addOption(Filter.levelsRT[depth + 1], inRel
 									.getMetaData().getId());
 
 						ONDEXMetaConcept from = meta.getSource(inRel);
 						// prevent self loop
-						if (!seenConcepts.contains(from) && ccPI.isPicked(from)) {
+						if (!seenConcepts.contains(from) && ccPI.isSelected(from)) {
 							if (shortest.isSelected())
 								seenConcepts.add(from);
 							queue.add(new Tuple<ONDEXMetaConcept, Integer>(
@@ -674,7 +676,7 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 							.getOfType();
 					for (ONDEXMetaConcept mc : meta.getVertices()) {
 						if (mc.getMetaData().equals(cc)) {
-							visviewer.getPickedVertexState().pick(mc, true);
+							visviewer.getSelectedVertexState().select(mc, true);
 							break;
 						}
 					}

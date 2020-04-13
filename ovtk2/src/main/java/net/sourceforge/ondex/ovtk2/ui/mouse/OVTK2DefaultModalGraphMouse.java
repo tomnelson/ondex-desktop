@@ -34,13 +34,20 @@ import net.sourceforge.ondex.ovtk2.ui.popup.VertexMenu;
 import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
 import net.sourceforge.ondex.ovtk2.util.xml.AnnotationXMLReader;
 import net.sourceforge.ondex.ovtk2.util.xml.AnnotationXMLWriter;
+import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
 import org.jungrapht.visualization.annotations.Annotation;
+import org.jungrapht.visualization.annotations.AnnotationControls;
 import org.jungrapht.visualization.annotations.AnnotationManager;
 import org.jungrapht.visualization.annotations.AnnotationPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
+import org.jungrapht.visualization.control.ViewScalingControl;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
  * Class extends JUNGs DefaultModalGraphMouse to be able to override the picking
@@ -222,7 +229,7 @@ public class OVTK2DefaultModalGraphMouse extends AnnotatingModalGraphMouse<ONDEX
 		}
 		if (e.getSource() instanceof VisualizationViewer<?, ?>) {
 
-			Layout<ONDEXConcept, ONDEXRelation> layout = viewer.getVisualizationViewer().getGraphLayout();
+			LayoutModel<ONDEXConcept> layout = viewer.getVisualizationViewer().getVisualizationModel().getLayoutModel();
 			if (super.mode == Mode.TRANSFORMING || super.mode == Mode.ANNOTATING) {
 				super.mousePressed(e);
 				return;
@@ -232,8 +239,8 @@ public class OVTK2DefaultModalGraphMouse extends AnnotatingModalGraphMouse<ONDEX
 			// is pick support available
 			GraphElementAccessor<ONDEXConcept, ONDEXRelation> pickSupport = viewer.getVisualizationViewer().getPickSupport();
 			if (pickSupport != null && (pickSupport.getEdge(layout, p.getX(), p.getY()) == null && pickSupport.getVertex(layout, p.getX(), p.getY()) == null)) {
-				viewer.getVisualizationViewer().getPickedVertexState().clear();
-				viewer.getVisualizationViewer().getPickedEdgeState().clear();
+				viewer.getVisualizationViewer().getSelectedVertexState().clear();
+				viewer.getVisualizationViewer().getSelectedEdgeState().clear();
 				((ModalGraphMouse) viewer.getVisualizationViewer().getGraphMouse()).setMode(Mode.TRANSFORMING);
 			}
 		}

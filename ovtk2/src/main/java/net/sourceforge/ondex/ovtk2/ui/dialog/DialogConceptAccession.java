@@ -200,7 +200,7 @@ public class DialogConceptAccession extends OVTK2Dialog {
 					Pair<?> key = keys[row];
 					Boolean ambiguous = accessions.get(key);
 					accessions.remove(key);
-					Pair<String> pair = new Pair<String>((String) key.first, (String) value);
+					Pair<String> pair = Pair.of((String) key.first, (String) value);
 					accessions.put(pair, ambiguous);
 					this.fireTableDataChanged();
 				}

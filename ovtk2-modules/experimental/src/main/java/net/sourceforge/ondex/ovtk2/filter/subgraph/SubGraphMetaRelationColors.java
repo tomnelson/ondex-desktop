@@ -2,8 +2,7 @@ package net.sourceforge.ondex.ovtk2.filter.subgraph;
 
 import java.awt.Color;
 import java.awt.Paint;
-
-import org.apache.commons.collections15.Transformer;
+import java.util.function.Function;
 
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaRelation;
 import org.jungrapht.visualization.selection.SelectedState;
@@ -15,7 +14,7 @@ import org.jungrapht.visualization.selection.SelectedState;
  * 
  */
 public class SubGraphMetaRelationColors implements
-		Transformer<ONDEXMetaRelation, Paint> {
+		Function<ONDEXMetaRelation, Paint> {
 
 	// ####FIELDS####
 
@@ -46,7 +45,8 @@ public class SubGraphMetaRelationColors implements
 	 *            ONDEXMetaRelation
 	 * @return Colour
 	 */
-	public Color transform(ONDEXMetaRelation edge) {
+	@Override
+	public Color apply(ONDEXMetaRelation edge) {
 		if (pi.isSelected(edge))
 			return Color.YELLOW;
 		if (edge.isVisible())

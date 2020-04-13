@@ -24,7 +24,7 @@ public abstract class OVTK2Layouter  implements LayoutAlgorithm<ONDEXConcept> {
 	protected VisualizationViewer<ONDEXConcept, ONDEXRelation> viewer;
 
 	protected LayoutModel<ONDEXConcept> layoutModel;
-	protected Graph<ONDEXConcept, ?> graph;
+	protected Graph<ONDEXConcept, ONDEXRelation> graph;
 
 	/**
 	 * Constructor sets internal variables from given OVTK2PropertiesAggregator.

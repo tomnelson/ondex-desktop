@@ -1,5 +1,43 @@
 package net.sourceforge.ondex.ovtk2.ui;
 
+import net.sourceforge.ondex.core.ONDEXConcept;
+import net.sourceforge.ondex.core.ONDEXEntity;
+import net.sourceforge.ondex.core.ONDEXGraph;
+import net.sourceforge.ondex.core.ONDEXRelation;
+import net.sourceforge.ondex.ovtk2.config.Config;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeArrows;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeColors;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeLabels;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeShapes;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeStrokes;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeDrawPaint;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeFillPaint;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeLabels;
+import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
+import net.sourceforge.ondex.ovtk2.graph.VisibilityUndo;
+import net.sourceforge.ondex.ovtk2.graph.custom.ONDEXBasicVertexRenderer;
+import net.sourceforge.ondex.ovtk2.layout.ConceptClassCircleLayout;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraph;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
+import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2AnnotatingGraphMousePlugin;
+import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2DefaultModalGraphMouse;
+import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
+import net.sourceforge.ondex.ovtk2.util.DesktopUtils;
+import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
+import net.sourceforge.ondex.ovtk2.util.RegisteredFrame;
+import net.sourceforge.ondex.ovtk2.util.VisualisationUtils;
+import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
+import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.selection.MutableSelectedState;
+
+import javax.swing.*;
+import javax.swing.undo.StateEdit;
+import javax.swing.undo.UndoManager;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,52 +70,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Function;
 
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
-import javax.swing.undo.StateEdit;
-import javax.swing.undo.UndoManager;
-
-import org.apache.commons.collections15.Function;
-
-import net.sourceforge.ondex.core.ONDEXConcept;
-import net.sourceforge.ondex.core.ONDEXEntity;
-import net.sourceforge.ondex.core.ONDEXGraph;
-import net.sourceforge.ondex.core.ONDEXRelation;
-import net.sourceforge.ondex.ovtk2.config.Config;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeArrows;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeColors;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeLabels;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeShapes;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXEdgeStrokes;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeDrawPaint;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeFillPaint;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeLabels;
-import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
-import net.sourceforge.ondex.ovtk2.graph.VisibilityUndo;
-import net.sourceforge.ondex.ovtk2.graph.custom.ONDEXBasicVertexRenderer;
-import net.sourceforge.ondex.ovtk2.layout.ConceptClassCircleLayout;
-import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraph;
-import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
-import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2AnnotatingGraphMousePlugin;
-import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2DefaultModalGraphMouse;
-import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
-import net.sourceforge.ondex.ovtk2.util.DesktopUtils;
-import net.sourceforge.ondex.ovtk2.util.ErrorDialog;
-import net.sourceforge.ondex.ovtk2.util.RegisteredFrame;
-import net.sourceforge.ondex.ovtk2.util.VisualisationUtils;
-import org.jungrapht.visualization.MultiLayerTransformer;
-import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.selection.SelectedState;
-
-import static org.jungrapht.visualization.MultiLayerTransformer.*;
-import static org.jungrapht.visualization.control.ModalGraphMouse.*;
+import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
+import static org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 
 /**
  * Represents the graphical visualisation of an ONDEXGraph.
@@ -251,8 +245,7 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 
 		// set default layouter
 		ConceptClassCircleLayout layout = new ConceptClassCircleLayout(this);
-		visviewer = VisualizationViewer.builder().layoutAlgorithm(layout).viewSize(new Dimension(640, 480)).build();
-//				new VisualizationViewer<ONDEXConcept, ONDEXRelation>(layout, new Dimension(640, 480));
+		visviewer = VisualizationViewer.<ONDEXConcept, ONDEXRelation>builder().layoutAlgorithm(layout).viewSize(new Dimension(640, 480)).build();
 		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
 		visviewer.setBackground(Color.white);
 		visviewer.setDoubleBuffered(true);
@@ -343,7 +336,7 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 
 		this.addComponentListener(this);
 		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(visviewer, BorderLayout.CENTER);
+		this.getContentPane().add(visviewer.getComponent(), BorderLayout.CENTER);
 
 		this.pack();
 
@@ -685,17 +678,18 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 	 * 
 	 * @return Set<ONDEXEdge>
 	 */
-//	@Override
+	@Override
 	public Set<ONDEXRelation> getSelectedEdges() {
 		return visviewer.getSelectedEdgeState().getSelected();
 	}
+
 
 	/**
 	 * Returns a set with Selected ONDEXNodes.
 	 * 
 	 * @return Set<ONDEXNode>
 	 */
-//	@Override
+	@Override
 	public Set<ONDEXConcept> getSelectedNodes() {
 		return visviewer.getSelectedVertexState().getSelected();
 	}
