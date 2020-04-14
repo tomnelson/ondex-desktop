@@ -260,9 +260,9 @@ public class RelationNeighboursFilter extends OVTK2Filter implements ListSelecti
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		populateList(viewer.getPickedNodes());
+		populateList(viewer.getSelectedNodes());
 		// this is for interactive filtering by clicking on graph
-		if (viewer.getPickedNodes().size() == 1 && interactive.isSelected()) {
+		if (viewer.getSelectedNodes().size() == 1 && interactive.isSelected()) {
 			try {
 				callFilter();
 			} catch (Exception e1) {

@@ -126,9 +126,7 @@ public class AttributeValueFilter extends OVTK2Filter implements
 			graph.setVisibility(c, visibility);
 		}
 
-		viewer.getVisualizationViewer().getModel().fireStateChanged();
-
-		edit.end();
+		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();edit.end();
 		viewer.getUndoManager().addEdit(edit);
 		desktop.getOVTK2Menu().updateUndoRedo(viewer);
 		desktop.notifyTerminationOfProcess();

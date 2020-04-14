@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import net.sourceforge.ondex.core.AttributeName;
 import net.sourceforge.ondex.core.ConceptClass;
@@ -15,6 +16,7 @@ import net.sourceforge.ondex.core.ONDEXGraph;
 import net.sourceforge.ondex.core.ONDEXGraphMetaData;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.core.RelationType;
+import org.jgrapht.GraphType;
 
 /**
  * Class that wraps an ONDEXGraph into a JUNG graph representation.
@@ -321,4 +323,103 @@ public class ONDEXJUNGGraph extends JUNGGraphAdapter {
 		return og.isReadOnly();
 	}
 
+	@Override
+	public Set<ONDEXRelation> getAllEdges(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
+		return null;
+	}
+
+	@Override
+	public ONDEXRelation getEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
+		return null;
+	}
+
+	@Override
+	public Supplier<ONDEXConcept> getVertexSupplier() {
+		return null;
+	}
+
+	@Override
+	public Supplier<ONDEXRelation> getEdgeSupplier() {
+		return null;
+	}
+
+	@Override
+	public ONDEXRelation addEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
+		return null;
+	}
+
+	@Override
+	public ONDEXConcept addVertex() {
+		return null;
+	}
+
+	@Override
+	public Set<ONDEXRelation> edgeSet() {
+		return null;
+	}
+
+	@Override
+	public int degreeOf(ONDEXConcept vertex) {
+		return 0;
+	}
+
+	@Override
+	public Set<ONDEXRelation> edgesOf(ONDEXConcept vertex) {
+		return null;
+	}
+
+	@Override
+	public int inDegreeOf(ONDEXConcept vertex) {
+		return 0;
+	}
+
+	@Override
+	public Set<ONDEXRelation> incomingEdgesOf(ONDEXConcept vertex) {
+		return null;
+	}
+
+	@Override
+	public int outDegreeOf(ONDEXConcept vertex) {
+		return 0;
+	}
+
+	@Override
+	public Set<ONDEXRelation> outgoingEdgesOf(ONDEXConcept vertex) {
+		return null;
+	}
+
+	@Override
+	public ONDEXRelation removeEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
+		return null;
+	}
+
+	@Override
+	public Set<ONDEXConcept> vertexSet() {
+		return null;
+	}
+
+	@Override
+	public ONDEXConcept getEdgeSource(ONDEXRelation ondexRelation) {
+		return null;
+	}
+
+	@Override
+	public ONDEXConcept getEdgeTarget(ONDEXRelation ondexRelation) {
+		return null;
+	}
+
+	@Override
+	public GraphType getType() {
+		return null;
+	}
+
+	@Override
+	public double getEdgeWeight(ONDEXRelation ondexRelation) {
+		return 0;
+	}
+
+	@Override
+	public void setEdgeWeight(ONDEXRelation ondexRelation, double weight) {
+
+	}
 }

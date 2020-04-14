@@ -10,8 +10,6 @@ package net.sourceforge.ondex.ovtk2.layout;
  * Created on Jul 9, 2005
  */
 import java.awt.BorderLayout;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +35,7 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.tools.threading.monitoring.Monitorable;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * TreeLayout adapted from the JUNG2 library.
@@ -70,7 +69,7 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 	/**
 	 * current linking point of last node
 	 */
-	private final Point m_currentPoint = new Point();
+	private Point m_currentPoint;
 
 	/**
 	 * build tree for reversed edge direction
@@ -114,7 +113,8 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 	void buildTree() {
 
 		// starting point of first root node
-		this.m_currentPoint.setLocation(0, 20);
+//		this.m_currentPoint.setLocation(0, 20);
+		this.m_currentPoint = Point.of(0, 20);
 		if (roots.size() > 0 && graph != null) {
 			// get total X size
 			calculateDimensionX(roots);
@@ -122,8 +122,10 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 			for (ONDEXConcept v : roots) {
 				state = "building tree " + progress;
 				calculateDimensionX(v);
-				m_currentPoint.x += this.basePositions.get(v) / 2 + 50;
-				buildTree(v, this.m_currentPoint.x);
+				m_currentPoint = m_currentPoint.add(this.basePositions.get(v) / 2 + 50, 0);
+//				m_currentPoint.x
+//						+= this.basePositions.get(v) / 2 + 50;
+				buildTree(v, (int)this.m_currentPoint.x);
 				progress++;
 				if (cancelled)
 					return;
@@ -146,8 +148,9 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 			allreadyDone.add(v);
 
 			// go one level further down
-			this.m_currentPoint.y += this.distY;
-			this.m_currentPoint.x = x;
+//			this.m_currentPoint.y += this.distY;
+//			this.m_currentPoint.x = x;
+			this.m_currentPoint = Point.of(x, this.m_currentPoint.y + this.distY);
 
 			this.setCurrentPositionFor(v);
 
@@ -179,7 +182,8 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 
 			// simply align them in y dimension, this is edge direction
 			// dependent, otherwise it gets upside down
-			this.m_currentPoint.y -= this.distY;
+//			this.m_currentPoint.y -= this.distY;
+			this.m_currentPoint = this.m_currentPoint.add(0, -this.distY);
 		}
 	}
 
@@ -456,7 +460,7 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 		allreadyDone.clear();
 		basePositions.clear();
 		distX = distY = 50;
-		locations.clear();
+		layoutModel.getLocations().clear();
 
 		// get roots in graph
 		roots = getRoots(graph);
@@ -469,7 +473,7 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 		buildTree();
 	}
 
-	@Override
+//	@Override
 	public void reset() {
 		initialize();
 	}
@@ -481,8 +485,9 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 	 *            ONDEXConcept to set location for
 	 */
 	private void setCurrentPositionFor(ONDEXConcept vertex) {
-		Point2D coord = transform(vertex);
-		coord.setLocation(m_currentPoint);
+//		Point coord = layoutModel.apply(vertex);
+//		coord.setLocation(m_currentPoint);
+		layoutModel.set(vertex, m_currentPoint);
 	}
 
 	@Override

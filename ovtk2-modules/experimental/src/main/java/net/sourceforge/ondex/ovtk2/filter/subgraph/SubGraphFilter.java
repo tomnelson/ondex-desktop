@@ -534,8 +534,7 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 			graph.setVisibility(relations, true);
 
 			// propagate change to viewer
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
-		}
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();}
 		edit.end();
 		viewer.getUndoManager().addEdit(edit);
 		desktop.getOVTK2Menu().updateUndoRedo(viewer);

@@ -72,7 +72,7 @@ public class ConnectivityLayout extends OVTK2Layouter {
 			rows = (Integer) rowSpinner.getValue();
 		}
 
-		Collection<ONDEXConcept> selected = aViewer.getPickedNodes();
+		Collection<ONDEXConcept> selected = aViewer.getSelectedNodes();
 		if (selected == null || selected.size() == 0) {
 			JOptionPane.showMessageDialog(viewer,
 					"You need to select some nodes first!",

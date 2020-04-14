@@ -457,8 +457,7 @@ public class MicroarrayAnnotator extends OVTK2Annotator implements
 		});
 
 		// update viewer
-		viewer.getVisualizationViewer().getModel().fireStateChanged();
-		viewer.getVisualizationViewer().repaint();
+		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();viewer.getVisualizationViewer().repaint();
 	}
 
 	/**
@@ -476,9 +475,7 @@ public class MicroarrayAnnotator extends OVTK2Annotator implements
 			ONDEXJUNGGraph jung = viewer.getONDEXJUNGGraph();
 			jung.setVisibility(jung.getEdges(), false);
 			jung.setVisibility(jung.getVertices(), false);
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
-
-			Map<ONDEXConcept, String> probeToValue = new HashMap<ONDEXConcept, String>();
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();Map<ONDEXConcept, String> probeToValue = new HashMap<ONDEXConcept, String>();
 
 			Iterator<String> probesIt = dataIndex.getProbes().iterator();
 			while (probesIt.hasNext()) {
@@ -535,8 +532,7 @@ public class MicroarrayAnnotator extends OVTK2Annotator implements
 			}
 
 			System.out.println(probesToShow.size() + " probes visible");
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
-		}
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();}
 	}
 
 	@Override

@@ -535,8 +535,7 @@ public class ValueGraphAnnotator extends OVTK2Annotator implements
 				.setVertexIconTransformer(vertexIconTransformer);
 		viewer.getVisualizationViewer().getRenderContext()
 				.setVertexShapeTransformer(vertexShapeTransformer);
-		viewer.getVisualizationViewer().getModel().fireStateChanged();
-		viewer.getVisualizationViewer().repaint();
+		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();viewer.getVisualizationViewer().repaint();
 	}
 
 	/**

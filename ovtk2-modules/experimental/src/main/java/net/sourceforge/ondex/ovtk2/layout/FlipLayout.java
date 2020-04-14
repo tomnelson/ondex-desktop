@@ -73,7 +73,7 @@ public class FlipLayout extends OVTK2Layouter {
 	 */
 //	@Override
 	public void initialize() {
-		Collection<ONDEXConcept> nodes = aViewer.getPickedNodes();
+		Collection<ONDEXConcept> nodes = aViewer.getSelectedNodes();
 		if (nodes == null || nodes.size() == 0)
 			nodes = graph.vertexSet();
 		double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;

@@ -58,7 +58,7 @@ public class EdgeMenu extends JPopupMenu implements EdgeMenuListener<ONDEXConcep
 	}
 
 	private Set<ONDEXRelation> getMultipleEdges(OVTK2Viewer viewer, ONDEXRelation edge) {
-		Set<ONDEXRelation> pickedEdges = viewer.getPickedEdges();
+		Set<ONDEXRelation> pickedEdges = viewer.getSelectedEdges();
 		if (!pickedEdges.contains(edge))
 			pickedEdges = Collections.singleton(edge);
 		return pickedEdges;
@@ -151,9 +151,9 @@ public class EdgeMenu extends JPopupMenu implements EdgeMenuListener<ONDEXConcep
 		add(relationInfo.getItem());
 
 		// SWAT4LS - 2010 demo
-		boolean selectedRelations = (viewer.getPickedEdges().size() != 0 || edges != null) ? true : false;
+		boolean selectedRelations = (viewer.getSelectedEdges().size() != 0 || edges != null) ? true : false;
 		;
-		boolean selectedConcepts = viewer.getPickedNodes().size() == 0 ? false : true;
+		boolean selectedConcepts = viewer.getSelectedNodes().size() == 0 ? false : true;
 
 		boolean empty = true;
 		JMenu querry = new JMenu("Query");

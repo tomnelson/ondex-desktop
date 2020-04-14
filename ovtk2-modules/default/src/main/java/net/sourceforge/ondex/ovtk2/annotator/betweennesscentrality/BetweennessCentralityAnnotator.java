@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -221,12 +222,7 @@ public class BetweennessCentralityAnnotator extends OVTK2Annotator implements
 			final Map<ONDEXConcept, Integer> amplification = resizeNodes(min,
 					max, map);
 			ONDEXNodeShapes nodeShapes = viewer.getNodeShapes();
-			nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-				@Override
-				public Integer transform(ONDEXConcept input) {
-					return amplification.get(input);
-				}
-			});
+			nodeShapes.setNodeSizes(input -> amplification.get(input));
 			nodeShapes.updateAll();
 
 			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();

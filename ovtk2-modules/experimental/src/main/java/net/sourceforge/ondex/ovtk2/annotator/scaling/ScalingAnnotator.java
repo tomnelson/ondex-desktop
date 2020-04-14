@@ -201,9 +201,7 @@ public class ScalingAnnotator extends OVTK2Annotator implements ActionListener {
 				});
 
 		// update visualisation
-		viewer.getVisualizationViewer().getModel().fireStateChanged();
-		
-		used = true;
+		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();used = true;
 	}
 
 	/**

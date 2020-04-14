@@ -30,7 +30,7 @@ public class Interactivity {
 	 * @return set of Ondex concepts
 	 */
 	public static Set<ONDEXConcept> getPickedConcepts(OVTK2PropertiesAggregator viewer) {
-		return viewer.getPickedNodes();
+		return viewer.getSelectedNodes();
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class Interactivity {
 	 * @return set of Ondex relations
 	 */
 	public static Set<ONDEXRelation> getPickedRelations(OVTK2PropertiesAggregator viewer) {
-		return viewer.getPickedEdges();
+		return viewer.getSelectedEdges();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class Interactivity {
 	 */
 	public static Subgraph getPickedSubgraph(OVTK2PropertiesAggregator viewer) {
 		ONDEXGraph graph = viewer.getONDEXJUNGGraph();
-		return new Subgraph(viewer.getPickedNodes(), viewer.getPickedEdges(), graph);
+		return new Subgraph(viewer.getSelectedNodes(), viewer.getSelectedEdges(), graph);
 	}
 
 	/**

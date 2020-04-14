@@ -80,7 +80,7 @@ public class VertexMenu extends JPopupMenu implements VertexMenuListener<ONDEXCo
 	}
 
 	protected Set<ONDEXConcept> getMultipleNodes(OVTK2Viewer viewer, ONDEXConcept vertex) {
-		Set<ONDEXConcept> pickedNodes = viewer.getPickedNodes();
+		Set<ONDEXConcept> pickedNodes = viewer.getSelectedNodes();
 		if (!pickedNodes.contains(vertex))
 			pickedNodes = Collections.singleton(vertex);
 		return pickedNodes;
@@ -274,8 +274,8 @@ public class VertexMenu extends JPopupMenu implements VertexMenuListener<ONDEXCo
 		}
 
 		// SWAT4LS - 2010 demo
-		boolean selectedConcepts = (viewer.getPickedNodes().size() != 0 || vertex != null) ? true : false;
-		boolean selectedRelations = viewer.getPickedEdges().size() == 0 ? false : true;
+		boolean selectedConcepts = (viewer.getSelectedNodes().size() != 0 || vertex != null) ? true : false;
+		boolean selectedRelations = viewer.getSelectedEdges().size() == 0 ? false : true;
 
 		Set<String> layoutAndCenter = new HashSet<String>();
 		boolean empty = true;
@@ -393,7 +393,7 @@ public class VertexMenu extends JPopupMenu implements VertexMenuListener<ONDEXCo
 		}
 
 		// merging concepts using backend functions
-		if (viewer.getPickedNodes().size() > 1) {
+		if (viewer.getSelectedNodes().size() > 1) {
 			JMenuItem merge = new JMenuItem("merge selection");
 			merge.addActionListener(new ActionListener() {
 
@@ -410,7 +410,7 @@ public class VertexMenu extends JPopupMenu implements VertexMenuListener<ONDEXCo
 					ClusterCollapser collapser = new ClusterCollapser(true, true, null);
 
 					// hide selection concepts to merger
-					HashSet<ONDEXConcept> toMerge = new HashSet<ONDEXConcept>(viewer.getPickedNodes());
+					HashSet<ONDEXConcept> toMerge = new HashSet<ONDEXConcept>(viewer.getSelectedNodes());
 					graph.setVisibility(toMerge, false);
 					try {
 						// merge concepts and set visible

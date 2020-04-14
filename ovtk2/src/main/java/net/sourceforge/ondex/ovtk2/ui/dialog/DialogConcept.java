@@ -234,7 +234,7 @@ public class DialogConcept extends OVTK2Dialog {
 		tags.removeAllItems();
 		tags.addItem("");
 		tags.addItem(Config.language.getProperty("Dialog.Concept.PickNew"));
-		for (ONDEXConcept c : viewer.getPickedNodes()) {
+		for (ONDEXConcept c : viewer.getSelectedNodes()) {
 			tags.addItem(String.valueOf(c.getId()));
 		}
 		tags.setSelectedIndex(0);

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -43,10 +44,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.undo.StateEdit;
-
-import org.apache.commons.collections15.Factory;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.map.LazyMap;
 
 import net.sourceforge.ondex.algorithm.graphquery.GraphTraverser;
 import net.sourceforge.ondex.algorithm.graphquery.StateMachine;
@@ -156,20 +153,22 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 	// toggles visibility of relations returned by search
 	private boolean toggleSearchResults = true;
 	
-	private Map<ONDEXConcept, Integer> conSizes = LazyMap.decorate(
-			new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
-				@Override
-				public Integer create() {
-					return Config.defaultNodeSize;
-				}
-			});
-	private Map<ONDEXRelation, Integer> relSizes = LazyMap.decorate(
-			new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
-				@Override
-				public Integer create() {
-					return Config.defaultEdgeSize;
-				}
-			});
+	private Map<ONDEXConcept, Integer> conSizes = new HashMap<>();
+//			LazyMap.decorate(
+//			new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
+//				@Override
+//				public Integer create() {
+//					return Config.defaultNodeSize;
+//				}
+//			});
+	private Map<ONDEXRelation, Integer> relSizes = new HashMap<>();
+//		LazyMap.decorate(
+//			new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
+//				@Override
+//				public Integer create() {
+//					return Config.defaultEdgeSize;
+//				}
+//			});
 
 	/**
 	 * Constructor populates GUI with defaults.
@@ -493,8 +492,8 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 				// propagate change to viewer
 				VisualizationModel<ONDEXConcept, ONDEXRelation> model = viewer
 						.getVisualizationViewer().getVisualizationModel();
-				model.setGraphLayout(layout);
-				model.fireStateChanged();
+				model.setLayoutAlgorithm(layout);
+				model.getModelChangeSupport().fireModelChanged();
 				viewer.center();
 
 				edit.end();
@@ -528,8 +527,7 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 				graph.setVisibility(r, toggleRelations);
 			}
 
-			viewer.getVisualizationViewer().getModel().fireStateChanged();
-			edit.end();
+			viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();edit.end();
 			viewer.getUndoManager().addEdit(edit);
 			desktop.getOVTK2Menu().updateUndoRedo(viewer);
 			desktop.notifyTerminationOfProcess();
@@ -715,36 +713,28 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 		resultConcepts = new HashSet<ONDEXConcept>();
 		resultRelations = new HashSet<ONDEXRelation>();
 		
-		conSizes = LazyMap.decorate(
-				new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
-					@Override
-					public Integer create() {
-						return Config.defaultNodeSize;
-					}
-				});
-		relSizes = LazyMap.decorate(
-				new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
-					@Override
-					public Integer create() {
-						return Config.defaultEdgeSize;
-					}
-				});
+		conSizes = new HashMap<>();
+//				LazyMap.decorate(
+//				new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
+//					@Override
+//					public Integer create() {
+//						return Config.defaultNodeSize;
+//					}
+//				});
+		relSizes = new HashMap<>();
+//				LazyMap.decorate(
+//				new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
+//					@Override
+//					public Integer create() {
+//						return Config.defaultEdgeSize;
+//					}
+//				});
 		
 		// reset node and edge sizes
 		viewer.getNodeShapes().setNodeSizes(
-				new Transformer<ONDEXConcept, Integer>() {
-					@Override
-					public Integer transform(ONDEXConcept input) {
-						return Config.defaultNodeSize;
-					}
-				});
+				input -> Config.defaultNodeSize);
 		viewer.getEdgeStrokes().setEdgeSizes(
-				new Transformer<ONDEXRelation, Integer>() {
-					@Override
-					public Integer transform(ONDEXRelation input) {
-						return Config.defaultEdgeSize;
-					}
-				});
+				input -> Config.defaultEdgeSize);
 		
 		Integer annotateSize = 50;
 		
@@ -835,21 +825,11 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// update graphs node shapes
 		ONDEXNodeShapes nodeShapes = viewer.getNodeShapes();
-		nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-			@Override
-			public Integer transform(ONDEXConcept input) {
-				return conSizes.get(input);
-			}
-		});
+		nodeShapes.setNodeSizes(input -> conSizes.get(input));
 
 		// set amplification of new edge stroke size
 		ONDEXEdgeStrokes edgeStrokes = viewer.getEdgeStrokes();
-		edgeStrokes.setEdgeSizes(new Transformer<ONDEXRelation, Integer>() {
-			@Override
-			public Integer transform(ONDEXRelation input) {
-				return relSizes.get(input);
-			}
-		});
+		edgeStrokes.setEdgeSizes(input -> relSizes.get(input));
 
 		viewer.updateViewer(null);
 		
@@ -864,9 +844,9 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// propagate change to viewer
 		VisualizationModel<ONDEXConcept, ONDEXRelation> model = viewer
-				.getVisualizationViewer().getModel();
-		model.setGraphLayout(layout);
-		model.fireStateChanged();
+				.getVisualizationViewer().getVisualizationModel();
+		model.setLayoutAlgorithm(layout);
+		model.getModelChangeSupport().fireModelChanged();
 		viewer.center();
     	
     	
@@ -997,21 +977,11 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// update graphs node shapes
 		ONDEXNodeShapes nodeShapes = viewer.getNodeShapes();
-		nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-			@Override
-			public Integer transform(ONDEXConcept input) {
-				return conSizes.get(input);
-			}
-		});
+		nodeShapes.setNodeSizes(input -> conSizes.get(input));
 
 		// set amplification of new edge stroke size
 		ONDEXEdgeStrokes edgeStrokes = viewer.getEdgeStrokes();
-		edgeStrokes.setEdgeSizes(new Transformer<ONDEXRelation, Integer>() {
-			@Override
-			public Integer transform(ONDEXRelation input) {
-				return relSizes.get(input);
-			}
-		});
+		edgeStrokes.setEdgeSizes(input -> relSizes.get(input));
 
 		viewer.updateViewer(null);
 
@@ -1112,7 +1082,7 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// check for pick status
 		Set<ONDEXConcept> picked = new HashSet<ONDEXConcept>();
-		for (ONDEXConcept node : viewer.getPickedNodes()) {
+		for (ONDEXConcept node : viewer.getSelectedNodes()) {
 			picked.add(node);
 		}
 
@@ -1212,36 +1182,28 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 		resultConcepts = new HashSet<ONDEXConcept>();
 		resultRelations = new HashSet<ONDEXRelation>();
 		
-		conSizes = LazyMap.decorate(
-				new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
-					@Override
-					public Integer create() {
-						return Config.defaultNodeSize;
-					}
-				});
-		relSizes = LazyMap.decorate(
-				new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
-					@Override
-					public Integer create() {
-						return Config.defaultEdgeSize;
-					}
-				});
+		conSizes = new HashMap<>();
+//				LazyMap.decorate(
+//				new HashMap<ONDEXConcept, Integer>(), new Factory<Integer>() {
+//					@Override
+//					public Integer create() {
+//						return Config.defaultNodeSize;
+//					}
+//				});
+		relSizes = new HashMap<>();
+//				LazyMap.decorate(
+//				new HashMap<ONDEXRelation, Integer>(), new Factory<Integer>() {
+//					@Override
+//					public Integer create() {
+//						return Config.defaultEdgeSize;
+//					}
+//				});
 		
 		// reset node and edge sizes
 		viewer.getNodeShapes().setNodeSizes(
-				new Transformer<ONDEXConcept, Integer>() {
-					@Override
-					public Integer transform(ONDEXConcept input) {
-						return Config.defaultNodeSize;
-					}
-				});
+				input -> Config.defaultNodeSize);
 		viewer.getEdgeStrokes().setEdgeSizes(
-				new Transformer<ONDEXRelation, Integer>() {
-					@Override
-					public Integer transform(ONDEXRelation input) {
-						return Config.defaultEdgeSize;
-					}
-				});
+				input -> Config.defaultEdgeSize);
 
 		// browse table data
 		DefaultTableModel tableModel = (DefaultTableModel) searchTable
@@ -1271,9 +1233,9 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// propagate change to viewer
 		VisualizationModel<ONDEXConcept, ONDEXRelation> model = viewer
-				.getVisualizationViewer().getModel();
-		model.setGraphLayout(layout);
-		model.fireStateChanged();
+				.getVisualizationViewer().getVisualizationModel();
+		model.setLayoutAlgorithm(layout);
+		model.getModelChangeSupport().fireModelChanged();
 		viewer.center();
 
 
@@ -1455,9 +1417,9 @@ public class InteractiveGenomicFilter extends OVTK2Filter implements
 
 		// set layout
 		VisualizationModel<ONDEXConcept, ONDEXRelation> model = viewer
-				.getVisualizationViewer().getModel();
-		model.setGraphLayout(layout);
-		model.fireStateChanged();
+				.getVisualizationViewer().getVisualizationModel();
+		model.setLayoutAlgorithm(layout);
+		model.getModelChangeSupport().fireModelChanged();
 		viewer.center();
 
 		// set nice shape for genes and QTLs

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
@@ -233,13 +234,10 @@ public class AppearanceSynchronizer {
 			}
 
 			// set new edge size function
-			edgeStrokes.setEdgeSizes(new Transformer<ONDEXRelation, Integer>() {
-				@Override
-				public Integer transform(ONDEXRelation input) {
-					if (sizes.containsKey(input))
-						return sizes.get(input);
-					return Config.defaultEdgeSize;
-				}
+			edgeStrokes.setEdgeSizes(input -> {
+				if (sizes.containsKey(input))
+					return sizes.get(input);
+				return Config.defaultEdgeSize;
 			});
 		}
 	}
@@ -324,13 +322,10 @@ public class AppearanceSynchronizer {
 			}
 
 			// set new node size function
-			nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-				@Override
-				public Integer transform(ONDEXConcept input) {
-					if (sizes.containsKey(input))
-						return sizes.get(input);
-					return Config.defaultNodeSize;
-				}
+			nodeShapes.setNodeSizes(input -> {
+				if (sizes.containsKey(input))
+					return sizes.get(input);
+				return Config.defaultNodeSize;
 			});
 		}
 
@@ -364,20 +359,10 @@ public class AppearanceSynchronizer {
 			}
 
 			// set new node aspect ratio function
-			nodeShapes.setNodeAspectRatios(new Transformer<ONDEXConcept, Float>() {
-				@Override
-				public Float transform(ONDEXConcept input) {
-					return ratios.get(input);
-				}
-			});
+			nodeShapes.setNodeAspectRatios(input -> ratios.get(input));
 
 			// set new node size function
-			nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-				@Override
-				public Integer transform(ONDEXConcept input) {
-					return sizes.get(input);
-				}
-			});
+			nodeShapes.setNodeSizes(input -> sizes.get(input));
 		}
 
 		// update all concepts not vertices before
@@ -512,10 +497,10 @@ public class AppearanceSynchronizer {
 		ONDEXNodeShapes nodeShapes = activeViewer.getNodeShapes();
 		ONDEXNodeFillPaint nodeColors = activeViewer.getNodeColors();
 		ONDEXNodeDrawPaint nodeDrawPaint = activeViewer.getNodeDrawPaint();
-		Transformer<ONDEXConcept, Integer> nodeSizes = nodeShapes.getNodeSizes();
+		Function<ONDEXConcept, Integer> nodeSizes = nodeShapes.getNodeSizes();
 		for (ONDEXConcept c : graph.getVertices()) {
 			// save colour
-			Paint paint = nodeColors.transform(c);
+			Paint paint = nodeColors.apply(c);
 			if (paint instanceof Color) {
 				Attribute color = c.getAttribute(attrColor);
 				if (color == null)
@@ -532,7 +517,7 @@ public class AppearanceSynchronizer {
 					attr.setValue(alpha);
 			}
 			// save draw colour
-			paint = nodeDrawPaint.transform(c);
+			paint = nodeDrawPaint.apply(c);
 			if (paint instanceof Color) {
 				Attribute draw = c.getAttribute(attrDrawColor);
 				if (draw == null)
@@ -556,7 +541,7 @@ public class AppearanceSynchronizer {
 			else
 				attribute.setValue(shapeID);
 			// save size
-			Integer size = nodeSizes.transform(c);
+			Integer size = nodeSizes.apply(c);
 			attribute = c.getAttribute(attrSize);
 			if (attribute == null)
 				c.createAttribute(attrSize, size, false);
@@ -566,10 +551,10 @@ public class AppearanceSynchronizer {
 
 		// set edge colours and visibility
 		ONDEXEdgeColors edgeColors = activeViewer.getEdgeColors();
-		Transformer<ONDEXRelation, Integer> edgeSizes = activeViewer.getEdgeStrokes().getEdgeSizeTransformer();
+		Function<ONDEXRelation, Integer> edgeSizes = activeViewer.getEdgeStrokes().getEdgeSizeTransformer();
 		for (ONDEXRelation r : graph.getEdges()) {
 			// save colour
-			Paint paint = edgeColors.transform(r);
+			Paint paint = edgeColors.apply(r);
 			if (paint instanceof Color) {
 				Attribute color = r.getAttribute(attrColor);
 				if (color == null)
@@ -591,7 +576,7 @@ public class AppearanceSynchronizer {
 				label.setValue(activeViewer.getEdgeLabels().getMask().get(r));
 			// save size
 			if (edgeSizes != null) {
-				Integer size = edgeSizes.transform(r);
+				Integer size = edgeSizes.apply(r);
 				Attribute attribute = r.getAttribute(attrSize);
 				if (attribute == null)
 					r.createAttribute(attrSize, size, false);
