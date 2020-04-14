@@ -1,23 +1,5 @@
 package net.sourceforge.ondex.ovtk2.metagraph;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
 import net.sourceforge.ondex.core.ConceptClass;
 import net.sourceforge.ondex.core.ONDEXConcept;
 import net.sourceforge.ondex.core.ONDEXRelation;
@@ -28,7 +10,21 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.ui.menu.actions.ViewMenuAction;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaConceptMenu.MetaConceptVisibilityItem;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaRelationMenu.MetaRelationVisibilityItem;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a metagraph view consisting of ConceptClasses and RelationType ids
@@ -37,7 +33,7 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
  * @author taubertj
  * 
  */
-public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelation> implements DirectedGraph<ONDEXMetaConcept, ONDEXMetaRelation>, ActionListener {
+public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMetaRelation> implements ActionListener {
 
 	/**
 	 * generated
@@ -74,6 +70,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 *            wrapped AbstractONDEXGraph
 	 */
 	public ONDEXMetaGraph(ONDEXJUNGGraph graph, OVTK2Viewer mainviewer) {
+		super(ONDEXMetaRelation.class);
 		this.graph = graph;
 		this.mainviewer = mainviewer;
 
@@ -145,7 +142,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 				}
 			}
 			// TODO: Update colour interface
-			mainviewer.getVisualizationViewer().getModel().fireStateChanged();
+			mainviewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();
 		} else if (arg0.getSource() instanceof MetaRelationVisibilityItem || arg0.getSource() instanceof ONDEXMetaRelation) {
 
 			ONDEXMetaRelation mr;
@@ -215,40 +212,62 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 		listenerList.add(ChangeListener.class, l);
 	}
 
-	/**
-	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
-	 * ONDEXMetaConcepts.
-	 * 
-	 * @param e
-	 *            ONDEXMetaRelation representing RelationType
-	 * @param v1
-	 *            ONDEXMetaConcept representing ConceptClass
-	 * @param v2
-	 *            ONDEXMetaConcept representing ConceptClass
-	 * @return true if successful
-	 */
-	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2) {
-		return addEdge(e, v1, v2, EdgeType.DIRECTED);
-	}
+//	/**
+//	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
+//	 * ONDEXMetaConcepts.
+//	 *
+//	 * @param e
+//	 *            ONDEXMetaRelation representing RelationType
+//	 * @param v1
+//	 *            ONDEXMetaConcept representing ConceptClass
+//	 * @param v2
+//	 *            ONDEXMetaConcept representing ConceptClass
+//	 * @return true if successful
+//	 */
+//	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2) {
+//		return addEdge(e, v1, v2, EdgeType.DIRECTED);
+//	}
 
-	/**
-	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
-	 * ONDEXMetaConcepts and an EdgeType.
-	 * 
-	 * @param e
-	 *            ONDEXMetaRelation representing RelationType
-	 * @param v1
-	 *            ONDEXMetaConcept representing ConceptClass
-	 * @param v2
-	 *            ONDEXMetaConcept representing ConceptClass
-	 * @param edgeType
-	 *            EdgeType
-	 * @return true if successful
-	 */
-	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2, EdgeType edgeType) {
-		return addEdge(e, Pair.of(v1, v2), edgeType);
-	}
+//	/**
+//	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
+//	 * ONDEXMetaConcepts and an EdgeType.
+//	 *
+//	 * @param e
+//	 *            ONDEXMetaRelation representing RelationType
+//	 * @param v1
+//	 *            ONDEXMetaConcept representing ConceptClass
+//	 * @param v2
+//	 *            ONDEXMetaConcept representing ConceptClass
+//	 * @param edgeType
+//	 *            EdgeType
+//	 * @return true if successful
+//	 */
+//	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2, EdgeType edgeType) {
+//		return addEdge(e, Pair.of(v1, v2), edgeType);
+//	}
 
+	protected Pair<ONDEXMetaConcept> getValidatedEndpoints(ONDEXMetaRelation edge, Pair<? extends ONDEXMetaConcept> endpoints)
+	{
+		if (edge == null)
+			throw new IllegalArgumentException("input edge may not be null");
+
+		if (endpoints == null)
+			throw new IllegalArgumentException("endpoints may not be null");
+
+		Pair<ONDEXMetaConcept> new_endpoints = Pair.of(endpoints.first, endpoints.second);
+		if (containsEdge(edge))
+		{
+			Pair<ONDEXMetaConcept> existing_endpoints = getEndpoints(edge);
+			if (!existing_endpoints.equals(new_endpoints)) {
+				throw new IllegalArgumentException("edge " + edge +
+						" already exists in this graph with endpoints " + existing_endpoints +
+						" and cannot be added with endpoints " + endpoints);
+			} else {
+				return null;
+			}
+		}
+		return new_endpoints;
+	}
 	/**
 	 * Adds a new ONDEXMetaRelation to the graph given by a Pair of endpoints
 	 * ONDEXMetaConcepts.
@@ -266,8 +285,8 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 
 		edges.put(edge, new_endpoints);
 
-		ONDEXMetaConcept source = new_endpoints.getFirst();
-		ONDEXMetaConcept dest = new_endpoints.getSecond();
+		ONDEXMetaConcept source = new_endpoints.first;
+		ONDEXMetaConcept dest = new_endpoints.second;
 
 		if (!vertices.containsKey(source))
 			this.addVertex(source);
@@ -281,24 +300,24 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 		return true;
 	}
 
-	/**
-	 * Adds a new ONDEXMetaRelation to the graph given by a Pair of endpoints
-	 * ONDEXMetaConcepts and an edge type.
-	 * 
-	 * @param edge
-	 *            ONDEXMetaRelation representing RelationType
-	 * @param endpoints
-	 *            Pair of ONDEXMetaConcepts
-	 * @param edgeType
-	 *            only directed edges accepted
-	 * @return true if successful
-	 */
-	@Override
-	public boolean addEdge(ONDEXMetaRelation edge, Pair<? extends ONDEXMetaConcept> endpoints, EdgeType edgeType) {
-		if (edgeType != EdgeType.DIRECTED)
-			throw new IllegalArgumentException("This graph does not accept edges of type " + edgeType);
-		return addEdge(edge, endpoints);
-	}
+//	/**
+//	 * Adds a new ONDEXMetaRelation to the graph given by a Pair of endpoints
+//	 * ONDEXMetaConcepts and an edge type.
+//	 *
+//	 * @param edge
+//	 *            ONDEXMetaRelation representing RelationType
+//	 * @param endpoints
+//	 *            Pair of ONDEXMetaConcepts
+//	 * @param edgeType
+//	 *            only directed edges accepted
+//	 * @return true if successful
+//	 */
+//	@Override
+//	public boolean addEdge(ONDEXMetaRelation edge, Pair<? extends ONDEXMetaConcept> endpoints, EdgeType edgeType) {
+//		if (edgeType != EdgeType.DIRECTED)
+//			throw new IllegalArgumentException("This graph does not accept edges of type " + edgeType);
+//		return addEdge(edge, endpoints);
+//	}
 
 	/**
 	 * Adds a new ONDEXMetaConcept to the graph.
@@ -312,7 +331,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 			throw new IllegalArgumentException("vertex may not be null");
 		}
 		if (!vertices.containsKey(vertex)) {
-			vertices.put(vertex, new Pair<Set<ONDEXMetaRelation>>(new HashSet<ONDEXMetaRelation>(), new HashSet<ONDEXMetaRelation>()));
+			vertices.put(vertex, Pair.of(new HashSet<ONDEXMetaRelation>(), new HashSet<ONDEXMetaRelation>()));
 			return true;
 		} else {
 			return false;
@@ -404,12 +423,12 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * Returns the destination of the edge (via toConcept) representing
 	 * RelationType.
 	 * 
-	 * @param directed_edge
+	 * @param edge
 	 *            ONDEXMetaRelation representing RelationType
 	 * @return ONDEXMetaConcept representing ConceptClass
 	 */
 	public ONDEXMetaConcept getDest(ONDEXMetaRelation edge) {
-		return this.getEndpoints(edge).getSecond();
+		return this.getEndpoints(edge).second;
 	}
 
 	/**
@@ -432,33 +451,33 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 		return Collections.unmodifiableCollection(edges.keySet());
 	}
 
-	/**
-	 * Returns a list of ONDEXMetaRelations of a certain EdgeType. Only
-	 * EdgeType.DIRECTED is supported.
-	 * 
-	 * @return Collection<ONDEXMetaRelation>
-	 */
-	public Collection<ONDEXMetaRelation> getEdges(EdgeType edgeType) {
-		if (edgeType == EdgeType.DIRECTED)
-			return getEdges();
-		else
-			return null;
-	}
+//	/**
+//	 * Returns a list of ONDEXMetaRelations of a certain EdgeType. Only
+//	 * EdgeType.DIRECTED is supported.
+//	 *
+//	 * @return Collection<ONDEXMetaRelation>
+//	 */
+//	public Collection<ONDEXMetaRelation> getEdges(EdgeType edgeType) {
+//		if (edgeType == EdgeType.DIRECTED)
+//			return getEdges();
+//		else
+//			return null;
+//	}
 
-	/**
-	 * Returns the EdgeType of an ONDEXMetaRelation. Only EdgeType.DIRECTED is
-	 * supported.
-	 * 
-	 * @param edge
-	 *            ONDEXMetaRelation representing RelationType
-	 * @return EdgeType
-	 */
-	public EdgeType getEdgeType(ONDEXMetaRelation edge) {
-		if (containsEdge(edge))
-			return EdgeType.DIRECTED;
-		else
-			return null;
-	}
+//	/**
+//	 * Returns the EdgeType of an ONDEXMetaRelation. Only EdgeType.DIRECTED is
+//	 * supported.
+//	 *
+//	 * @param edge
+//	 *            ONDEXMetaRelation representing RelationType
+//	 * @return EdgeType
+//	 */
+//	public EdgeType getEdgeType(ONDEXMetaRelation edge) {
+//		if (containsEdge(edge))
+//			return EdgeType.DIRECTED;
+//		else
+//			return null;
+//	}
 
 	/**
 	 * Returns the two endpoints of an ONDEXMetaRelation (via fromConcept and
@@ -495,7 +514,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * @return Collection<ONDEXMetaRelation>
 	 */
 	protected Collection<ONDEXMetaRelation> getIncoming_internal(ONDEXMetaConcept vertex) {
-		return vertices.get(vertex).getFirst();
+		return vertices.get(vertex).first;
 	}
 
 	/**
@@ -547,7 +566,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * @return Collection<ONDEXMetaRelation>
 	 */
 	protected Collection<ONDEXMetaRelation> getOutgoing_internal(ONDEXMetaConcept vertex) {
-		return vertices.get(vertex).getSecond();
+		return vertices.get(vertex).second;
 	}
 
 	/**
@@ -569,12 +588,12 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * Returns the source of the edge (via fromConcept) representing
 	 * RelationType.
 	 * 
-	 * @param directed_edge
+	 * @param edge
 	 *            ONDEXMetaRelation representing RelationType
 	 * @return ONDEXMetaConcept representing ConceptClass
 	 */
 	public ONDEXMetaConcept getSource(ONDEXMetaRelation edge) {
-		return this.getEndpoints(edge).getFirst();
+		return this.getEndpoints(edge).first;
 	}
 
 	/**
@@ -622,7 +641,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * @return is destination
 	 */
 	public boolean isDest(ONDEXMetaConcept vertex, ONDEXMetaRelation edge) {
-		return vertex.equals(this.getEndpoints(edge).getSecond());
+		return vertex.equals(this.getEndpoints(edge).second);
 	}
 
 	/**
@@ -635,7 +654,7 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 	 * @return is source
 	 */
 	public boolean isSource(ONDEXMetaConcept vertex, ONDEXMetaRelation edge) {
-		return vertex.equals(this.getEndpoints(edge).getFirst());
+		return vertex.equals(this.getEndpoints(edge).first);
 	}
 
 	/**
@@ -661,8 +680,8 @@ public class ONDEXMetaGraph extends SparseGraph<ONDEXMetaConcept, ONDEXMetaRelat
 			return false;
 
 		Pair<ONDEXMetaConcept> endpoints = this.getEndpoints(edge);
-		ONDEXMetaConcept source = endpoints.getFirst();
-		ONDEXMetaConcept dest = endpoints.getSecond();
+		ONDEXMetaConcept source = endpoints.first;
+		ONDEXMetaConcept dest = endpoints.second;
 
 		// remove edge from incident vertices' adjacency sets
 		getOutgoing_internal(source).remove(edge);

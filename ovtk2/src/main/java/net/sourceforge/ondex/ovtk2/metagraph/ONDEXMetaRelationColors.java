@@ -1,16 +1,15 @@
 package net.sourceforge.ondex.ovtk2.metagraph;
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.util.Hashtable;
-import java.util.Map;
-
-import org.apache.commons.collections15.Transformer;
-
 import net.sourceforge.ondex.core.RelationType;
 import net.sourceforge.ondex.ovtk2.config.Config;
 import net.sourceforge.ondex.ovtk2.graph.ONDEXJUNGGraph;
 import org.jungrapht.visualization.selection.SelectedState;
+
+import java.awt.Color;
+import java.awt.Paint;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Provides a transformation from a given ONDEXMetaRelation to a Color.
@@ -18,7 +17,7 @@ import org.jungrapht.visualization.selection.SelectedState;
  * @author taubertj
  * 
  */
-public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, Paint> {
+public class ONDEXMetaRelationColors implements Function<ONDEXMetaRelation, Paint> {
 
 	// contains mapping id to colour
 	private Map<RelationType, Color> colors = null;
@@ -54,7 +53,8 @@ public class ONDEXMetaRelationColors implements Transformer<ONDEXMetaRelation, P
 	 *            ONDEXMetaRelation
 	 * @return Colour
 	 */
-	public Color transform(ONDEXMetaRelation edge) {
+	@Override
+	public Color apply(ONDEXMetaRelation edge) {
 		if (pi.isSelected(edge)) {
 			return Config.nodePickedColor;
 		} else {
