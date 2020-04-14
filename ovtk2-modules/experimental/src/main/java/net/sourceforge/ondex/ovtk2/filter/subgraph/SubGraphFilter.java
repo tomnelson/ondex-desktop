@@ -65,6 +65,8 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.SelectedState;
 
@@ -258,8 +260,8 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 				.createTitledBorder("Root concept selection"));
 
 		// new meta graph viewer
-		layout = new KKLayoutAlgorithm<>(meta);
-		visviewer = VisualizationViewer.<ONDEXMetaConcept, ONDEXMetaRelation>builder()
+		layout = new KKLayoutAlgorithm<>();
+		visviewer = VisualizationViewer.<ONDEXMetaConcept, ONDEXMetaRelation>builder(meta)
 				.viewSize(preferredSize).layoutAlgorithm(layout).build();
 		visviewer.setDoubleBuffered(true);
 		visviewer.setBackground(Color.white);
@@ -358,26 +360,25 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 	 * 
 	 * @return Point2D[] min bounds, max bounds
 	 */
-	private Point2D[] calcBounds() {
-		Point2D[] result = new Point2D[2];
-		Point2D min = null;
-		Point2D max = null;
-		Iterator<ONDEXMetaConcept> it = layoutModel.getGraph().getVertices()
+	private Point[] calcBounds() {
+		LayoutModel<ONDEXMetaConcept> layoutModel = visviewer.getVisualizationModel().getLayoutModel();
+		Point[] result = new Point[2];
+		Point min = null;
+		Point max = null;
+		Iterator<ONDEXMetaConcept> it = layoutModel.getGraph().vertexSet()
 				.iterator();
 		while (it.hasNext()) {
-			Point2D point = layoutModel.apply(it.next());
+			Point point = layoutModel.apply(it.next());
 			if (min == null) {
-				min = new Point2D.Double(0, 0);
-				min.setLocation(point);
+				min = point;
 			}
 			if (max == null) {
-				max = new Point2D.Double(0, 0);
-				max.setLocation(point);
+				max = point;
 			}
-			min.setLocation(Math.min(min.getX(), point.getX()),
-					Math.min(min.getY(), point.getY()));
-			max.setLocation(Math.max(max.getX(), point.getX()),
-					Math.max(max.getY(), point.getY()));
+			min = Point.of(Math.min(min.x, point.x),
+					Math.min(min.y, point.y));
+			max = Point.of(Math.max(max.x, point.x),
+					Math.max(max.y, point.y));
 		}
 		result[0] = min;
 		result[1] = max;
@@ -396,21 +397,21 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 				.getTransformer(Layer.VIEW).setToIdentity();
 
 		// place layout centre in centre of the view
-		Point2D[] calc = calcBounds();
-		Point2D min = calc[0];
-		Point2D max = calc[1];
+		Point[] calc = calcBounds();
+		Point min = calc[0];
+		Point max = calc[1];
 
 		// check for empty graph
 		if (min != null && max != null) {
-			Point2D layout_bounds = new Point2D.Double(max.getX() - min.getX(),
-					max.getY() - min.getY());
+			Point2D layout_bounds = new Point2D.Double(max.x - min.x,
+					max.y - min.y);
 			// layouter produced nice bounds
 			if (layout_bounds.getX() > 0 && layout_bounds.getY() > 0) {
 				Point2D screen_center = visviewer.getCenter();
 				Point2D layout_center = new Point2D.Double(screen_center.getX()
-						- (layout_bounds.getX() / 2) - min.getX(),
+						- (layout_bounds.getX() / 2) - min.x,
 						screen_center.getY() - (layout_bounds.getY() / 2)
-								- min.getY());
+								- min.y);
 				visviewer.getRenderContext().getMultiLayerTransformer()
 						.getTransformer(Layer.VIEW)
 						.translate(layout_center.getX(), layout_center.getY());

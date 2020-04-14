@@ -1,33 +1,5 @@
 package net.sourceforge.ondex.ovtk2.annotator.microarray;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
-import javax.swing.border.Border;
-
-import org.apache.commons.collections15.Factory;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.map.LazyMap;
-
 import net.sourceforge.ondex.core.ConceptAccession;
 import net.sourceforge.ondex.core.ConceptClass;
 import net.sourceforge.ondex.core.ONDEXConcept;
@@ -41,6 +13,22 @@ import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeFillPaint.NodeFillPaintSelecti
 import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
 import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.ovtk2.util.SpringUtilities;
+import org.apache.commons.collections15.Factory;
+import org.apache.commons.collections15.map.LazyMap;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -449,12 +437,7 @@ public class MicroarrayAnnotator extends OVTK2Annotator implements
 
 		// set node sizes for graph
 		ONDEXNodeShapes nodeShapes = viewer.getNodeShapes();
-		nodeShapes.setNodeSizes(new Transformer<ONDEXConcept, Integer>() {
-			@Override
-			public Integer transform(ONDEXConcept input) {
-				return amplification.get(input);
-			}
-		});
+		nodeShapes.setNodeSizes(input -> amplification.get(input));
 
 		// update viewer
 		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();viewer.getVisualizationViewer().repaint();

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.function.Function;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -170,12 +171,7 @@ public class ScalingAnnotator extends OVTK2Annotator implements ActionListener {
 
 		// change node sizes
 		viewer.getNodeShapes().setNodeSizes(
-				new Transformer<ONDEXConcept, Integer>() {
-					@Override
-					public Integer transform(ONDEXConcept arg0) {
-						return ccScaling.get(arg0);
-					}
-				});
+				arg0 -> ccScaling.get(arg0));
 		viewer.getNodeShapes().updateAll();
 
 		// get final results for relation types
@@ -193,12 +189,7 @@ public class ScalingAnnotator extends OVTK2Annotator implements ActionListener {
 
 		// change edge sizes
 		viewer.getEdgeStrokes().setEdgeSizes(
-				new Transformer<ONDEXRelation, Integer>() {
-					@Override
-					public Integer transform(ONDEXRelation arg0) {
-						return rtScaling.get(arg0);
-					}
-				});
+				arg0 -> rtScaling.get(arg0));
 
 		// update visualisation
 		viewer.getVisualizationViewer().getVisualizationModel().getModelChangeSupport().fireModelChanged();used = true;
