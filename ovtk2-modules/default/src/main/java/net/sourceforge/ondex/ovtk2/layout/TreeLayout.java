@@ -35,6 +35,7 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2PropertiesAggregator;
 import net.sourceforge.ondex.tools.threading.monitoring.Monitorable;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
@@ -106,6 +107,11 @@ public class TreeLayout extends OVTK2Layouter implements Monitorable {
 		super(viewer);
 	}
 
+
+	public void visit(LayoutModel<ONDEXConcept> layoutModel) {
+		super.visit(layoutModel);
+		buildTree();
+	}
 	/**
 	 * Build the tree on the whole graph.
 	 * 

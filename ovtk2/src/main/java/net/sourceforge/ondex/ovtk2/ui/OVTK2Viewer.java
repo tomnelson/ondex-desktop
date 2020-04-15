@@ -18,8 +18,10 @@ import net.sourceforge.ondex.ovtk2.graph.ONDEXNodeShapes;
 import net.sourceforge.ondex.ovtk2.graph.VisibilityUndo;
 import net.sourceforge.ondex.ovtk2.graph.custom.ONDEXBasicVertexRenderer;
 import net.sourceforge.ondex.ovtk2.layout.ConceptClassCircleLayout;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaConcept;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraph;
 import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaGraphPanel;
+import net.sourceforge.ondex.ovtk2.metagraph.ONDEXMetaRelation;
 import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2AnnotatingGraphMousePlugin;
 import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2DefaultModalGraphMouse;
 import net.sourceforge.ondex.ovtk2.ui.mouse.OVTK2GraphMouse;
@@ -245,7 +247,7 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 
 		// set default layouter
 		ConceptClassCircleLayout layout = new ConceptClassCircleLayout(this);
-		visviewer = VisualizationViewer.<ONDEXConcept, ONDEXRelation>builder().layoutAlgorithm(layout).viewSize(new Dimension(640, 480)).build();
+		visviewer = VisualizationViewer.builder(graph).layoutAlgorithm(layout).viewSize(new Dimension(640, 480)).build();
 		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
 		visviewer.setBackground(Color.white);
 		visviewer.setDoubleBuffered(true);

@@ -54,7 +54,7 @@ public class ConceptClassCircleLayout extends OVTK2Layouter implements Monitorab
 	}
 
 	public void visit(LayoutModel<ONDEXConcept> layoutModel) {
-		this.layoutModel = layoutModel;
+		super.visit(layoutModel);
 		initialize();
 	}
 

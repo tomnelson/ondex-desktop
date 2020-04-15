@@ -381,14 +381,11 @@ public class AttributeKKLayout extends OVTK2Layouter implements ActionListener,
 	 */
 	public AttributeKKLayout(OVTK2PropertiesAggregator viewer) {
 		super(viewer);
-//		this.distance = new UnweightedShortestPath<ONDEXConcept, ONDEXRelation>(
-//				graph);
 	}
+
 	@Override
 	public void visit(LayoutModel<ONDEXConcept> layoutModel) {
 		super.visit(layoutModel);
-
-		Graph<ONDEXConcept, ?> graph = layoutModel.getGraph();
 		if (graph != null) {
 			this.distance = getDistances(graph);
 		}

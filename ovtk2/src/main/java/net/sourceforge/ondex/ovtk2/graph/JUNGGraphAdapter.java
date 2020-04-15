@@ -262,7 +262,7 @@ public abstract class JUNGGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEX
 		if (!containsEdge(edge))
 			return null;
 
-		return getEdgeTarget(edge);
+		return getEndpoints(edge).second;
 //				getEndpoints(edge).getSecond();
 	}
 
@@ -506,6 +506,46 @@ public abstract class JUNGGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEX
 		 *            which ONDEXRelation is in-visible
 		 */
 		public void edgeHide(ONDEXRelation edge);
+	}
+
+	public ONDEXConcept getOpposite(ONDEXConcept vertex, ONDEXRelation edge)
+	{
+		Pair<ONDEXConcept> incident = this.getEndpoints(edge);
+		ONDEXConcept first = incident.first;
+		ONDEXConcept second = incident.second;
+		if (vertex.equals(first))
+			return second;
+		else if (vertex.equals(second))
+			return first;
+		else
+			throw new IllegalArgumentException(vertex + " is not incident to " + edge + " in this graph");
+	}
+	public ONDEXRelation findEdge(ONDEXConcept v1, ONDEXConcept v2)
+	{
+		for (ONDEXRelation e : getOutEdges(v1))
+		{
+			if (getOpposite(v1, e).equals(v2))
+				return e;
+		}
+		return null;
+	}
+
+
+	public Collection<ONDEXRelation> findEdgeSet(ONDEXConcept v1, ONDEXConcept v2)
+	{
+		if (!getVertices().contains(v1))
+			throw new IllegalArgumentException(v1 + " is not an element of this graph");
+
+		if (!getVertices().contains(v2))
+			throw new IllegalArgumentException(v2 + " is not an element of this graph");
+
+		Collection<ONDEXRelation> edges = new ArrayList<ONDEXRelation>();
+		for (ONDEXRelation e : getOutEdges(v1))
+		{
+			if (getOpposite(v1, e).equals(v2))
+				edges.add(e);
+		}
+		return Collections.unmodifiableCollection(edges);
 	}
 
 }

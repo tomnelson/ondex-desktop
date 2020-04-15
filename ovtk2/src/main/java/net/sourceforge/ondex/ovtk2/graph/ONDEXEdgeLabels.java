@@ -68,7 +68,7 @@ public class ONDEXEdgeLabels implements Function<ONDEXRelation, String> {
 	 * @return String
 	 */
 	public String apply(ONDEXRelation edge) {
-		if (!mask.get(edge)) {
+		if (!mask.getOrDefault(edge, defaultMask)) {
 			return "";
 		} else {
 			if (!labels.containsKey(edge))
