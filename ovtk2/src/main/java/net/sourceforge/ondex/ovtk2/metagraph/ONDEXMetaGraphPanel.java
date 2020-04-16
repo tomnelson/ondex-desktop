@@ -89,8 +89,6 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 		super(new BorderLayout());
 		this.viewer = viewer;
 		this.meta = viewer.getMetaGraph();
-//		this.visualizationModel = viewer.getVisualizationViewer().getVisualizationModel();
-//		this.layoutModel = viewer.getVisualizationViewer().getVisualizationModel().getLayoutModel();
 
 		initVisviewer();
 	}
@@ -180,13 +178,13 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 	private void initVisviewer() {
 
 		ONDEXJUNGGraph jung = viewer.getONDEXJUNGGraph();
-		visualizationModel = viewer.getVisualizationViewer().getVisualizationModel();
+//		visualizationModel = viewer.getVisualizationViewer().getVisualizationModel();
 
 		// new metagraph viewer
-//		layout = new KKLayoutAlgorithm<ONDEXMetaConcept>(meta);
-		visviewer = VisualizationViewer.<ONDEXMetaConcept, ONDEXMetaRelation>builder(meta).viewSize(preferredSize).build();
+		layout = new KKLayoutAlgorithm<>();
+		visviewer = VisualizationViewer.builder(meta).viewSize(preferredSize).build();
 //				new VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation>(layout, preferredSize);
-		LayoutAlgorithm<ONDEXMetaConcept> layout = new KKLayoutAlgorithm<>();
+//		LayoutAlgorithm<ONDEXMetaConcept> layout = new KKLayoutAlgorithm<>();
 		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
 		visviewer.setDoubleBuffered(false);
 		visviewer.setBackground(Color.white);

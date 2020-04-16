@@ -10,6 +10,9 @@ import net.sourceforge.ondex.ovtk2.ui.OVTK2Viewer;
 import net.sourceforge.ondex.ovtk2.ui.menu.actions.ViewMenuAction;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaConceptMenu.MetaConceptVisibilityItem;
 import net.sourceforge.ondex.ovtk2.ui.popup.MetaRelationMenu.MetaRelationVisibilityItem;
+import org.jgrapht.GraphType;
+import org.jgrapht.graph.AbstractGraph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 
@@ -25,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Represents a metagraph view consisting of ConceptClasses and RelationType ids
@@ -33,7 +37,7 @@ import java.util.Set;
  * @author taubertj
  * 
  */
-public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMetaRelation> implements ActionListener {
+public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRelation> implements ActionListener {
 
 	/**
 	 * generated
@@ -70,7 +74,6 @@ public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMe
 	 *            wrapped AbstractONDEXGraph
 	 */
 	public ONDEXMetaGraph(ONDEXJUNGGraph graph, OVTK2Viewer mainviewer) {
-		super(ONDEXMetaRelation.class);
 		this.graph = graph;
 		this.mainviewer = mainviewer;
 
@@ -319,6 +322,44 @@ public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMe
 //		return addEdge(edge, endpoints);
 //	}
 
+	@Override
+	public Set<ONDEXMetaRelation> getAllEdges(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex) {
+		HashSet<ONDEXMetaRelation> set = new HashSet<>();
+		set.addAll(this.findEdgeSet(sourceVertex, targetVertex));
+		set.addAll(this.findEdgeSet(targetVertex, sourceVertex));
+		return set;
+	}
+
+	@Override
+	public ONDEXMetaRelation getEdge(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex) {
+		return findEdge(sourceVertex, targetVertex);
+	}
+
+	@Override
+	public Supplier<ONDEXMetaConcept> getVertexSupplier() {
+		return null;
+	}
+
+	@Override
+	public Supplier<ONDEXMetaRelation> getEdgeSupplier() {
+		return null;
+	}
+
+	@Override
+	public ONDEXMetaRelation addEdge(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex) {
+		return null;
+	}
+
+	@Override
+	public boolean addEdge(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex, ONDEXMetaRelation ondexMetaRelation) {
+		return false;
+	}
+
+	@Override
+	public ONDEXMetaConcept addVertex() {
+		return null;
+	}
+
 	/**
 	 * Adds a new ONDEXMetaConcept to the graph.
 	 * 
@@ -360,6 +401,60 @@ public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMe
 	 */
 	public boolean containsVertex(ONDEXMetaConcept vertex) {
 		return vertices.containsKey(vertex);
+	}
+
+	@Override
+	public Set<ONDEXMetaRelation> edgeSet() {
+		return new HashSet<>(getEdges());
+	}
+
+	@Override
+	public int degreeOf(ONDEXMetaConcept vertex) {
+		return this.getIncidentEdges(vertex).size();
+	}
+
+	@Override
+	public Set<ONDEXMetaRelation> edgesOf(ONDEXMetaConcept vertex) {
+		return new HashSet<>(this.getIncidentEdges(vertex));
+	}
+
+	@Override
+	public int inDegreeOf(ONDEXMetaConcept vertex) {
+		return this.incomingEdgesOf(vertex).size();
+	}
+
+	@Override
+	public Set<ONDEXMetaRelation> incomingEdgesOf(ONDEXMetaConcept vertex) {
+		Set<ONDEXMetaRelation> incoming = new HashSet<>();
+		edgesOf(vertex).forEach(e -> {
+			ONDEXMetaConcept source = getSource(e);
+			if (source != vertex) {
+				incoming.add(e);
+			}
+		});
+		return incoming;
+	}
+
+	@Override
+	public int outDegreeOf(ONDEXMetaConcept vertex) {
+		return this.outgoingEdgesOf(vertex).size();
+	}
+
+	@Override
+	public Set<ONDEXMetaRelation> outgoingEdgesOf(ONDEXMetaConcept vertex) {
+		Set<ONDEXMetaRelation> outgoing = new HashSet<>();
+		edgesOf(vertex).forEach(e -> {
+			ONDEXMetaConcept source = getDest(e);
+			if (source != vertex) {
+				outgoing.add(e);
+			}
+		});
+		return outgoing;
+	}
+
+	@Override
+	public ONDEXMetaRelation removeEdge(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex) {
+		return null;
 	}
 
 	/**
@@ -713,6 +808,36 @@ public class ONDEXMetaGraph extends DirectedMultigraph<ONDEXMetaConcept, ONDEXMe
 		vertices.remove(vertex);
 
 		return true;
+	}
+
+	@Override
+	public Set<ONDEXMetaConcept> vertexSet() {
+		return new HashSet<>(getVertices());
+	}
+
+	@Override
+	public ONDEXMetaConcept getEdgeSource(ONDEXMetaRelation ondexMetaRelation) {
+		return this.getSource(ondexMetaRelation);
+	}
+
+	@Override
+	public ONDEXMetaConcept getEdgeTarget(ONDEXMetaRelation ondexMetaRelation) {
+		return getDest(ondexMetaRelation);
+	}
+
+	@Override
+	public GraphType getType() {
+		return DefaultGraphType.directedPseudograph();
+	}
+
+	@Override
+	public double getEdgeWeight(ONDEXMetaRelation ondexMetaRelation) {
+		return 0;
+	}
+
+	@Override
+	public void setEdgeWeight(ONDEXMetaRelation ondexMetaRelation, double weight) {
+
 	}
 
 }

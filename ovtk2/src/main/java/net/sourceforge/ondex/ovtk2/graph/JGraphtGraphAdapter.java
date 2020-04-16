@@ -5,10 +5,8 @@ import net.sourceforge.ondex.core.ONDEXEntity;
 import net.sourceforge.ondex.core.ONDEXGraph;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import org.jgrapht.GraphType;
-import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.AbstractGraph;
 import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.Multigraph;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 
 import java.util.ArrayList;
@@ -369,26 +367,31 @@ public abstract class JGraphtGraphAdapter extends AbstractGraph<ONDEXConcept, ON
 
     @Override
     public ONDEXConcept getEdgeSource(ONDEXRelation ondexRelation) {
+
         return this.getSource(ondexRelation);
     }
 
     @Override
     public ONDEXConcept getEdgeTarget(ONDEXRelation ondexRelation) {
+
         return getDest(ondexRelation);
     }
 
     @Override
     public int degreeOf(ONDEXConcept vertex) {
+
         return this.getIncidentEdges(vertex).size();
     }
 
     @Override
     public Set<ONDEXRelation> edgesOf(ONDEXConcept vertex) {
+
         return new HashSet<>(this.getIncidentEdges(vertex));
     }
 
     @Override
     public int inDegreeOf(ONDEXConcept vertex) {
+
         return this.incomingEdgesOf(vertex).size();
     }
 
@@ -406,6 +409,7 @@ public abstract class JGraphtGraphAdapter extends AbstractGraph<ONDEXConcept, ON
 
     @Override
     public int outDegreeOf(ONDEXConcept vertex) {
+
         return this.outgoingEdgesOf(vertex).size();
     }
 
