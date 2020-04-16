@@ -365,11 +365,6 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 		while (temperature > stop_temperature && iteration < stop_iteration) {
 			// com.hp.hpl.guess.ui.StatusBar.setValue((int)stop_iteration,
 			// (int)iteration);
-			System.err.println("temperature: "+temperature);
-			System.err.println("stop_temperature: "+stop_temperature);
-			System.err.println("iteration: "+iteration);
-			System.err.println("stop_iteration: "+stop_iteration);
-
 			a_round();
 			if (cancelled)
 				return;

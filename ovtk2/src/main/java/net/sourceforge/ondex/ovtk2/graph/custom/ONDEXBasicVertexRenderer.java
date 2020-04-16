@@ -52,9 +52,10 @@ public class ONDEXBasicVertexRenderer extends HeavyweightVertexRenderer<ONDEXCon
 		return path;
 	}
 
+	// TODO: this needs work to make sure it's okay with the jungrapht rendering
 	@Override
 	protected void paintIconForVertex(RenderContext<ONDEXConcept, ONDEXRelation> rc, VisualizationModel<ONDEXConcept, ONDEXRelation> visualizationModel, ONDEXConcept v) {
-//		super.paintIconForVertex(rc, visualizationModel, v);
+		super.paintIconForVertex(rc, visualizationModel, v);
 
 		LayoutModel<ONDEXConcept> layoutModel = visualizationModel.getLayoutModel();
 		// check for flagged drawing

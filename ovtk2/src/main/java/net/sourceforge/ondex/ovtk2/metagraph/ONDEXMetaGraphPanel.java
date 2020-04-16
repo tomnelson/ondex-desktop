@@ -188,7 +188,7 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 //				new VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation>(layout, preferredSize);
 		LayoutAlgorithm<ONDEXMetaConcept> layout = new KKLayoutAlgorithm<>();
 		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
-		visviewer.setDoubleBuffered(true);
+		visviewer.setDoubleBuffered(false);
 		visviewer.setBackground(Color.white);
 
 		// set label position and label transformer

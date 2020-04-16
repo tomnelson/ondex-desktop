@@ -250,7 +250,7 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 		visviewer = VisualizationViewer.builder(graph).layoutAlgorithm(layout).viewSize(new Dimension(640, 480)).build();
 		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
 		visviewer.setBackground(Color.white);
-		visviewer.setDoubleBuffered(true);
+//		visviewer.setDoubleBuffered(true);
 
 		// apply layout also to invisible nodes
 		layout.initialize(true);
@@ -907,7 +907,7 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 		g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
 		visviewer.getComponent().paint(g2d);
-		visviewer.setDoubleBuffered(true);
+		visviewer.setDoubleBuffered(false);
 
 		return (Printable.PAGE_EXISTS);
 	}

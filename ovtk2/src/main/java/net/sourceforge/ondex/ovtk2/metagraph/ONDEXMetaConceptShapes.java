@@ -37,8 +37,8 @@ public class ONDEXMetaConceptShapes implements Function<ONDEXMetaConcept, Shape>
 	public ONDEXMetaConceptShapes(ONDEXJUNGGraph graph) {
 
 		this.graph = graph;
-		this.shapes = new Hashtable<ConceptClass, Shape>();
-		this.shapeFactory = new VertexShapeFactory<ONDEXMetaConcept>(n -> 20, e -> 1.0f);
+		this.shapes = new Hashtable<>();
+		this.shapeFactory = new VertexShapeFactory<>(n -> 20, e -> 1.0f);
 		// initialise shapes
 		updateAll();
 	}

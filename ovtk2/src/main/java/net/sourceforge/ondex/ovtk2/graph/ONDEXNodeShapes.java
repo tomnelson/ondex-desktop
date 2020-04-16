@@ -164,11 +164,11 @@ public class ONDEXNodeShapes implements Function<ONDEXConcept, Shape> {
 	 * 
 	 */
 	public ONDEXNodeShapes() {
-		this.shapes = new HashMap<ONDEXConcept, Shape>();
-		this.shapeIDs = new HashMap<ONDEXConcept, Integer>();
+		this.shapes = new HashMap<>();
+		this.shapeIDs = new HashMap<>();
 		this.varf = input -> 1.0f;
 		this.vsf = input -> Config.getSizeForConceptClass(input.getOfType());
-		this.shapeFactory = new VertexShapeFactory<ONDEXConcept>(vsf, varf);
+		this.shapeFactory = new VertexShapeFactory<>(vsf, varf);
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class ONDEXNodeShapes implements Function<ONDEXConcept, Shape> {
 	 */
 	public void setNodeAspectRatios(Function<ONDEXConcept, Float> varf) {
 		this.varf = varf;
-		this.shapeFactory = new VertexShapeFactory<ONDEXConcept>(vsf, varf);
+		this.shapeFactory = new VertexShapeFactory<>(vsf, varf);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class ONDEXNodeShapes implements Function<ONDEXConcept, Shape> {
 	 */
 	public void setNodeSizes(Function<ONDEXConcept, Integer> vsf) {
 		this.vsf = vsf;
-		this.shapeFactory = new VertexShapeFactory<ONDEXConcept>(vsf, varf);
+		this.shapeFactory = new VertexShapeFactory<>(vsf, varf);
 	}
 
 	/**

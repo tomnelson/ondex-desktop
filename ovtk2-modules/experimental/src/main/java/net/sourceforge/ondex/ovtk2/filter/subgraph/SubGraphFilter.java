@@ -263,7 +263,7 @@ public class SubGraphFilter extends OVTK2Filter implements ComponentListener,
 		layout = new KKLayoutAlgorithm<>();
 		visviewer = VisualizationViewer.<ONDEXMetaConcept, ONDEXMetaRelation>builder(meta)
 				.viewSize(preferredSize).layoutAlgorithm(layout).build();
-		visviewer.setDoubleBuffered(true);
+		visviewer.setDoubleBuffered(false);
 		visviewer.setBackground(Color.white);
 
 		// set label position and label transformer
