@@ -5,6 +5,9 @@ import net.sourceforge.ondex.core.ONDEXEntity;
 import net.sourceforge.ondex.core.ONDEXGraph;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import org.jgrapht.GraphType;
+import org.jgrapht.graph.AbstractBaseGraph;
+import org.jgrapht.graph.AbstractGraph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.Multigraph;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 
@@ -18,11 +21,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public abstract class JGraphtGraphAdapter extends Multigraph<ONDEXConcept, ONDEXRelation> implements ONDEXGraph {
+public abstract class JGraphtGraphAdapter extends AbstractGraph<ONDEXConcept, ONDEXRelation> implements ONDEXGraph {
 
-    protected JGraphtGraphAdapter() {
-        super(ONDEXRelation.class);
-    }
+//    protected JGraphtGraphAdapter() {
+//        super(ONDEXRelation.class);
+//    }
     /**
      * show a vertex or not, index by ONDEXConcept id
      */
@@ -344,20 +347,20 @@ public abstract class JGraphtGraphAdapter extends Multigraph<ONDEXConcept, ONDEX
         return new HashSet<>(this.findEdgeSet(sourceVertex, targetVertex));
     }
 
-    @Override
-    public Supplier<ONDEXRelation> getEdgeSupplier() {
-        return super.getEdgeSupplier();
-    }
+//    @Override
+//    public Supplier<ONDEXRelation> getEdgeSupplier() {
+//        return super.getEdgeSupplier();
+//    }
 
-    @Override
-    public void setEdgeSupplier(Supplier<ONDEXRelation> edgeSupplier) {
-        super.setEdgeSupplier(edgeSupplier);
-    }
+//    @Override
+//    public void setEdgeSupplier(Supplier<ONDEXRelation> edgeSupplier) {
+//        super.setEdgeSupplier(edgeSupplier);
+//    }
 
-    @Override
-    public Supplier<ONDEXConcept> getVertexSupplier() {
-        return super.getVertexSupplier();
-    }
+//    @Override
+//    public Supplier<ONDEXConcept> getVertexSupplier() {
+//        return super.getVertexSupplier();
+//    }
 
     @Override
     public ONDEXRelation getEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
@@ -391,7 +394,14 @@ public abstract class JGraphtGraphAdapter extends Multigraph<ONDEXConcept, ONDEX
 
     @Override
     public Set<ONDEXRelation> incomingEdgesOf(ONDEXConcept vertex) {
-        return super.incomingEdgesOf(vertex);
+        Set<ONDEXRelation> incoming = new HashSet<>();
+        edgesOf(vertex).forEach(e -> {
+            ONDEXConcept source = getSource(e);
+            if (source != vertex) {
+                incoming.add(e);
+            }
+        });
+        return incoming;
     }
 
     @Override
@@ -401,28 +411,35 @@ public abstract class JGraphtGraphAdapter extends Multigraph<ONDEXConcept, ONDEX
 
     @Override
     public Set<ONDEXRelation> outgoingEdgesOf(ONDEXConcept vertex) {
-        return super.outgoingEdgesOf(vertex);
+        Set<ONDEXRelation> outgoing = new HashSet<>();
+        edgesOf(vertex).forEach(e -> {
+            ONDEXConcept source = getDest(e);
+            if (source != vertex) {
+                outgoing.add(e);
+            }
+        });
+        return outgoing;
     }
 
     @Override
     public ONDEXRelation removeEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
-        return super.removeEdge(sourceVertex, targetVertex);
+        throw new IllegalArgumentException("Method not supported.");
     }
 
-    @Override
-    public double getEdgeWeight(ONDEXRelation ondexRelation) {
-        return super.getEdgeWeight(ondexRelation);
-    }
+//    @Override
+//    public double getEdgeWeight(ONDEXRelation ondexRelation) {
+//        return super.getEdgeWeight(ondexRelation);
+//    }
 
-    @Override
-    public void setEdgeWeight(ONDEXRelation ondexRelation, double weight) {
-        super.setEdgeWeight(ondexRelation, weight);
-    }
+//    @Override
+//    public void setEdgeWeight(ONDEXRelation ondexRelation, double weight) {
+//        super.setEdgeWeight(ondexRelation, weight);
+//    }
 
-    @Override
-    public GraphType getType() {
-        return super.getType();
-    }
+//    @Override
+//    public GraphType getType() {
+//        return super.getType();
+//    }
 
     //	@Override
 //	public Collection<ONDEXRelation> getEdges(EdgeType edgeType) {
@@ -644,5 +661,39 @@ public abstract class JGraphtGraphAdapter extends Multigraph<ONDEXConcept, ONDEX
         public void edgeHide(ONDEXRelation edge);
     }
 
+    @Override
+    public Supplier<ONDEXConcept> getVertexSupplier() {
+        return null;
+    }
+
+    @Override
+    public Supplier<ONDEXRelation> getEdgeSupplier() {
+        return null;
+    }
+
+    @Override
+    public ONDEXRelation addEdge(ONDEXConcept sourceVertex, ONDEXConcept targetVertex) {
+        throw new IllegalArgumentException("Method not supported.");
+    }
+
+    @Override
+    public ONDEXConcept addVertex() {
+        throw new IllegalArgumentException("Method not supported.");
+    }
+
+    @Override
+    public GraphType getType() {
+        return DefaultGraphType.directedPseudograph();
+    }
+
+    @Override
+    public double getEdgeWeight(ONDEXRelation ondexRelation) {
+        return 0;
+    }
+
+    @Override
+    public void setEdgeWeight(ONDEXRelation ondexRelation, double weight) {
+
+    }
 
 }

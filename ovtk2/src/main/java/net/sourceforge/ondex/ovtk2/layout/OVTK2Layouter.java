@@ -42,9 +42,6 @@ public abstract class OVTK2Layouter  implements LayoutAlgorithm<ONDEXConcept> {
 		this.graph = layoutModel.getGraph();
 	}
 
-//	public abstract void initialize();
-
-
 	/**
 	 * Prevent changing the graph belonging to this layout.
 	 * 

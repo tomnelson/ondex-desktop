@@ -2,6 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Modified by Ondex - Version 0.5.0</comment>
+<entry key="Program.LastSaved">/home/tom/projects/ondex-full/ondex-doc/ovtk2/src/tutorial/Tutorial_files/Main_part/poplar_exercise1.oxl</entry>
 <entry key="Viewer.EdgeMenu.ShowEdgeSameTagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ShowEdgeSameTagItem</entry>
 <entry key="ContentsDisplay.Plugins">EntityInfoPlugin;AccessionPlugin;TaxidPlugin;ConfidencePlugin;SequencePlugin;PublicationPlugin;HierarchyPlugin;URIPlugin;StructurePlugin;EvidencePlugin;ChemicalStructurePlugin</entry>
 <entry key="Menu.Annotator.ColorCategory">net.sourceforge.ondex.ovtk2.annotator.colorcategory.ColorCategoryAnnotator</entry>
@@ -46,6 +47,7 @@
 <entry key="Dialog.Attribute.java.lang.Double">DoubleEditor</entry>
 <entry key="SQL.Enable">false</entry>
 <entry key="Dialog.Attribute.java.util.List">ListEditor</entry>
+<entry key="Program.LastOpened">/home/tom/projects/ondex-full/ondex-doc/ovtk2/src/tutorial/Tutorial_files/Main_part/poplar_exercise1.oxl</entry>
 <entry key="Dialog.Attribute.java.lang.Integer">IntegerEditor</entry>
 <entry key="Viewer.VertexMenu.ChangeNodeClearFlagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ChangeNodeClearFlagItem</entry>
 <entry key="FilterClose.Option">0</entry>

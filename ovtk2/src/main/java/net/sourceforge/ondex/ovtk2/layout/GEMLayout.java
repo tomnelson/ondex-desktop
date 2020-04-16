@@ -81,7 +81,10 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 	}
 
 	public void visit(LayoutModel<ONDEXConcept> layoutModel) {
+
 		super.visit(layoutModel);
+		this.initialize();
+		this.arrange();
 	}
 
 	/**
@@ -362,6 +365,11 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 		while (temperature > stop_temperature && iteration < stop_iteration) {
 			// com.hp.hpl.guess.ui.StatusBar.setValue((int)stop_iteration,
 			// (int)iteration);
+			System.err.println("temperature: "+temperature);
+			System.err.println("stop_temperature: "+stop_temperature);
+			System.err.println("iteration: "+iteration);
+			System.err.println("stop_iteration: "+stop_iteration);
+
 			a_round();
 			if (cancelled)
 				return;
@@ -421,13 +429,9 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 		while (it.hasNext()) {
 			Point point = coords.get(it.next());
 			if (min == null) {
-//				min = new Point2D.Double(0, 0);
-//				min.setLocation(point);
 				min = point;
 			}
 			if (max == null) {
-//				max = new Point2D.Double(0, 0);
-//				max.setLocation(point);
 				max = point;
 			}
 			min = Point.of(Math.min(min.x, point.x), Math.min(min.y, point.y));
@@ -457,10 +461,10 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 		}
 
 		// contains all possible subgraphs
-		Set<Graph<ONDEXConcept, ONDEXRelation>> subgraphs = new HashSet<Graph<ONDEXConcept, ONDEXRelation>>();
+		Set<Graph<ONDEXConcept, ONDEXRelation>> subgraphs = new HashSet<>();
 
 		// sort each vertex into one subgraph
-		Set<ONDEXConcept> sorted = new HashSet<ONDEXConcept>();
+		Set<ONDEXConcept> sorted = new HashSet<>();
 		for (ONDEXConcept n : original.vertexSet()) {
 
 			// Orphan node
@@ -469,7 +473,6 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 				// create new cluster starting at this node
 				Graph<ONDEXConcept, ONDEXRelation> cluster =
 						GraphTypeBuilder.<ONDEXConcept, ONDEXRelation>forGraphType(graph.getType()).buildGraph();
-//						new SparseGraph<ONDEXConcept, ONDEXRelation>();
 				subgraphs.add(cluster);
 
 				// add node to new cluster and mark as sorted
@@ -477,9 +480,8 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 				sorted.add(n);
 
 				// inspect neighbours of n do BFS
-				Queue<ONDEXConcept> queue = new LinkedList<ONDEXConcept>();
+				Queue<ONDEXConcept> queue = new LinkedList<>();
 				Collection<ONDEXConcept> neigbours = Graphs.neighborListOf(original, n);
-//						original.getNeighbors(n);
 				queue.addAll(neigbours);
 
 				// process queue
@@ -495,8 +497,9 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 						Collection<ONDEXRelation> nextEdges = new HashSet<>();
 						nextEdges.addAll(original.outgoingEdgesOf(next));
 						nextEdges.addAll(original.incomingEdgesOf(next));
-//								original.getIncidentEdges(next);
 						for (ONDEXRelation edge : nextEdges) {
+							cluster.addVertex(original.getEdgeSource(edge));
+							cluster.addVertex(original.getEdgeTarget(edge));
 							cluster.addEdge(original.getEdgeSource(edge), original.getEdgeTarget(edge), edge);
 						}
 
@@ -509,8 +512,6 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 			if (cancelled)
 				return subgraphs;
 		}
-		// System.out.println(subgraphs);
-
 		return subgraphs;
 	}
 
@@ -1079,10 +1080,6 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 		stop_temperature = (int) (o_finaltemp * o_finaltemp * ELENSQR * nodeCount);
 		stop_iteration = o_maxiter * nodeCount * nodeCount;
 
-		// System.out.print( "optimise phase -- temp " );
-		// System.out.print( stop_temperature + " iter ");
-		// System.out.println ( stop_iteration );
-
 		while (temperature > stop_temperature && iteration < stop_iteration) {
 			o_round(graph);
 			if ((iteration % 20000) == 0) {
@@ -1143,7 +1140,7 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 				ONDEXConcept n = invmap[i];
 
 				Point coord = Point.of(p.x, p.y);
-				layoutModel.set(n, p.x, p.y);
+				layoutModel.set(n, coord);
 
 				if (p.x < minX)
 					minX = p.x;
@@ -1196,7 +1193,8 @@ public class GEMLayout extends OVTK2Layouter implements ChangeListener, Monitora
 				if (newY > tmpY)
 					tmpY = newY;
 				coord = Point.of(newX, newY);
-				layoutModel.set(n, coord);
+				localLayouts.get(subgraph).put(n, Point.of(newX, newY));
+				layoutModel.set(n, Point.of(newX, newY));
 			}
 
 			// shift horizontally keep track of vertical

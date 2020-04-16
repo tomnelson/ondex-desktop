@@ -11,11 +11,13 @@ import net.sourceforge.ondex.core.ONDEXGraphMetaData;
 import net.sourceforge.ondex.core.ONDEXRelation;
 import net.sourceforge.ondex.core.RelationType;
 import net.sourceforge.ondex.exception.type.NullValueException;
+import org.jgrapht.GraphType;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Class that wraps an ONDEXGraph into a JUNG graph representation.
@@ -192,4 +194,6 @@ public class ONDEXJUNGGraph extends JGraphtGraphAdapter {
 	public long getSID() {
 		return og.getSID();
 	}
+
+
 }
