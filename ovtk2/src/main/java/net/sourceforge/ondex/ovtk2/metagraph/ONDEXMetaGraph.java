@@ -13,7 +13,6 @@ import net.sourceforge.ondex.ovtk2.ui.popup.MetaRelationMenu.MetaRelationVisibil
 import org.jgrapht.GraphType;
 import org.jgrapht.graph.AbstractGraph;
 import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.DirectedMultigraph;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 
 import javax.swing.event.ChangeEvent;
@@ -54,10 +53,10 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	private ONDEXJUNGGraph graph = null;
 
 	// Map of vertices to Pair of adjacency sets {incoming, outgoing}
-	private Map<ONDEXMetaConcept, Pair<Set<ONDEXMetaRelation>>> vertices = new HashMap<ONDEXMetaConcept, Pair<Set<ONDEXMetaRelation>>>();
+	private Map<ONDEXMetaConcept, Pair<Set<ONDEXMetaRelation>>> vertices = new HashMap<>();
 
 	// Map of edges to incident vertex pairs
-	private Map<ONDEXMetaRelation, Pair<ONDEXMetaConcept>> edges = new HashMap<ONDEXMetaRelation, Pair<ONDEXMetaConcept>>();
+	private Map<ONDEXMetaRelation, Pair<ONDEXMetaConcept>> edges = new HashMap<>();
 
 	// lazy change event
 	private ChangeEvent event = null;
@@ -185,7 +184,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 
 	private void createEdgeForRelationType(RelationType rt) {
 		// collect information on pairs of concept classes
-		Set<Pair<ConceptClass>> betweenCC = new HashSet<Pair<ConceptClass>>();
+		Set<Pair<ConceptClass>> betweenCC = new HashSet<>();
 		for (ONDEXRelation r : graph.getRelationsOfRelationType(rt)) {
 			ConceptClass from = r.getFromConcept().getOfType();
 			ConceptClass to = r.getToConcept().getOfType();
@@ -214,40 +213,6 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	public void addChangeListener(ChangeListener l) {
 		listenerList.add(ChangeListener.class, l);
 	}
-
-//	/**
-//	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
-//	 * ONDEXMetaConcepts.
-//	 *
-//	 * @param e
-//	 *            ONDEXMetaRelation representing RelationType
-//	 * @param v1
-//	 *            ONDEXMetaConcept representing ConceptClass
-//	 * @param v2
-//	 *            ONDEXMetaConcept representing ConceptClass
-//	 * @return true if successful
-//	 */
-//	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2) {
-//		return addEdge(e, v1, v2, EdgeType.DIRECTED);
-//	}
-
-//	/**
-//	 * Adds a new ONDEXMetaRelation to the graph given by the two endpoints
-//	 * ONDEXMetaConcepts and an EdgeType.
-//	 *
-//	 * @param e
-//	 *            ONDEXMetaRelation representing RelationType
-//	 * @param v1
-//	 *            ONDEXMetaConcept representing ConceptClass
-//	 * @param v2
-//	 *            ONDEXMetaConcept representing ConceptClass
-//	 * @param edgeType
-//	 *            EdgeType
-//	 * @return true if successful
-//	 */
-//	public boolean addEdge(ONDEXMetaRelation e, ONDEXMetaConcept v1, ONDEXMetaConcept v2, EdgeType edgeType) {
-//		return addEdge(e, Pair.of(v1, v2), edgeType);
-//	}
 
 	protected Pair<ONDEXMetaConcept> getValidatedEndpoints(ONDEXMetaRelation edge, Pair<? extends ONDEXMetaConcept> endpoints)
 	{
@@ -303,31 +268,9 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 		return true;
 	}
 
-//	/**
-//	 * Adds a new ONDEXMetaRelation to the graph given by a Pair of endpoints
-//	 * ONDEXMetaConcepts and an edge type.
-//	 *
-//	 * @param edge
-//	 *            ONDEXMetaRelation representing RelationType
-//	 * @param endpoints
-//	 *            Pair of ONDEXMetaConcepts
-//	 * @param edgeType
-//	 *            only directed edges accepted
-//	 * @return true if successful
-//	 */
-//	@Override
-//	public boolean addEdge(ONDEXMetaRelation edge, Pair<? extends ONDEXMetaConcept> endpoints, EdgeType edgeType) {
-//		if (edgeType != EdgeType.DIRECTED)
-//			throw new IllegalArgumentException("This graph does not accept edges of type " + edgeType);
-//		return addEdge(edge, endpoints);
-//	}
-
 	@Override
 	public Set<ONDEXMetaRelation> getAllEdges(ONDEXMetaConcept sourceVertex, ONDEXMetaConcept targetVertex) {
-		HashSet<ONDEXMetaRelation> set = new HashSet<>();
-		set.addAll(this.findEdgeSet(sourceVertex, targetVertex));
-		set.addAll(this.findEdgeSet(targetVertex, sourceVertex));
-		return set;
+		return findAllEdgesBetween(sourceVertex, targetVertex);
 	}
 
 	@Override
@@ -372,7 +315,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 			throw new IllegalArgumentException("vertex may not be null");
 		}
 		if (!vertices.containsKey(vertex)) {
-			vertices.put(vertex, Pair.of(new HashSet<ONDEXMetaRelation>(), new HashSet<ONDEXMetaRelation>()));
+			vertices.put(vertex, Pair.of(new HashSet<>(), new HashSet<>()));
 			return true;
 		} else {
 			return false;
@@ -405,7 +348,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 
 	@Override
 	public Set<ONDEXMetaRelation> edgeSet() {
-		return new HashSet<>(getEdges());
+		return edges.keySet();
 	}
 
 	@Override
@@ -475,7 +418,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 
 	/**
 	 * Returns all edges between two ONDEXMetaConcepts.
-	 * 
+	 * this is surely wrong, as it returns at most only one edge (tan)
 	 * @param v1
 	 *            ONDEXMetaConcept
 	 * @param v2
@@ -491,6 +434,18 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 			return edge_collection;
 		edge_collection.add(e);
 		return edge_collection;
+	}
+
+	public Set<ONDEXMetaRelation> findAllEdgesBetween(ONDEXMetaConcept source, ONDEXMetaConcept target) {
+		Set<ONDEXMetaRelation> set = new HashSet<>();
+		for (ONDEXMetaRelation edge : getOutgoing_internal(source))
+			if (this.getDest(edge).equals(target))
+				set.add(edge);
+		for(ONDEXMetaRelation edge : getIncoming_internal(target))
+			if (this.getSource(edge).equals(source))
+				set.add(edge);
+
+		return set;
 	}
 
 	/**
@@ -546,34 +501,6 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 		return Collections.unmodifiableCollection(edges.keySet());
 	}
 
-//	/**
-//	 * Returns a list of ONDEXMetaRelations of a certain EdgeType. Only
-//	 * EdgeType.DIRECTED is supported.
-//	 *
-//	 * @return Collection<ONDEXMetaRelation>
-//	 */
-//	public Collection<ONDEXMetaRelation> getEdges(EdgeType edgeType) {
-//		if (edgeType == EdgeType.DIRECTED)
-//			return getEdges();
-//		else
-//			return null;
-//	}
-
-//	/**
-//	 * Returns the EdgeType of an ONDEXMetaRelation. Only EdgeType.DIRECTED is
-//	 * supported.
-//	 *
-//	 * @param edge
-//	 *            ONDEXMetaRelation representing RelationType
-//	 * @return EdgeType
-//	 */
-//	public EdgeType getEdgeType(ONDEXMetaRelation edge) {
-//		if (containsEdge(edge))
-//			return EdgeType.DIRECTED;
-//		else
-//			return null;
-//	}
-
 	/**
 	 * Returns the two endpoints of an ONDEXMetaRelation (via fromConcept and
 	 * toConcept).
@@ -595,7 +522,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	 * @return Collection<ONDEXMetaRelation>
 	 */
 	public Collection<ONDEXMetaRelation> getIncidentEdges(ONDEXMetaConcept vertex) {
-		Collection<ONDEXMetaRelation> incident = new HashSet<ONDEXMetaRelation>();
+		Collection<ONDEXMetaRelation> incident = new HashSet<>();
 		incident.addAll(getIncoming_internal(vertex));
 		incident.addAll(getOutgoing_internal(vertex));
 		return incident;
@@ -633,7 +560,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	 * @return Collection<OndexNode>
 	 */
 	public Collection<ONDEXMetaConcept> getNeighbors(ONDEXMetaConcept vertex) {
-		Collection<ONDEXMetaConcept> neighbors = new HashSet<ONDEXMetaConcept>();
+		Collection<ONDEXMetaConcept> neighbors = new HashSet<>();
 		for (ONDEXMetaRelation edge : getIncoming_internal(vertex))
 			neighbors.add(this.getSource(edge));
 		for (ONDEXMetaRelation edge : getOutgoing_internal(vertex))
@@ -673,7 +600,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	 * @return Collection<ONDEXMetaConcept>
 	 */
 	public Collection<ONDEXMetaConcept> getPredecessors(ONDEXMetaConcept vertex) {
-		Set<ONDEXMetaConcept> preds = new HashSet<ONDEXMetaConcept>();
+		Set<ONDEXMetaConcept> preds = new HashSet<>();
 		for (ONDEXMetaRelation edge : getIncoming_internal(vertex))
 			preds.add(this.getSource(edge));
 		return Collections.unmodifiableCollection(preds);
@@ -700,7 +627,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 	 * @return Collection<ONDEXMetaConcept>
 	 */
 	public Collection<ONDEXMetaConcept> getSuccessors(ONDEXMetaConcept vertex) {
-		Set<ONDEXMetaConcept> succs = new HashSet<ONDEXMetaConcept>();
+		Set<ONDEXMetaConcept> succs = new HashSet<>();
 		for (ONDEXMetaRelation edge : getOutgoing_internal(vertex))
 			succs.add(this.getDest(edge));
 		return Collections.unmodifiableCollection(succs);
@@ -812,7 +739,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 
 	@Override
 	public Set<ONDEXMetaConcept> vertexSet() {
-		return new HashSet<>(getVertices());
+		return vertices.keySet();
 	}
 
 	@Override
@@ -827,7 +754,7 @@ public class ONDEXMetaGraph extends AbstractGraph<ONDEXMetaConcept, ONDEXMetaRel
 
 	@Override
 	public GraphType getType() {
-		return DefaultGraphType.directedPseudograph();
+		return DefaultGraphType.directedMultigraph();
 	}
 
 	@Override

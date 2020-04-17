@@ -182,10 +182,11 @@ public class ONDEXMetaGraphPanel extends JPanel implements ActionListener, Chang
 
 		// new metagraph viewer
 		layout = new KKLayoutAlgorithm<>();
-		visviewer = VisualizationViewer.builder(meta).viewSize(preferredSize).build();
+		visviewer = VisualizationViewer.builder(meta).layoutAlgorithm(layout).viewSize(preferredSize).build();
 //				new VisualizationViewer<ONDEXMetaConcept, ONDEXMetaRelation>(layout, preferredSize);
 //		LayoutAlgorithm<ONDEXMetaConcept> layout = new KKLayoutAlgorithm<>();
-		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
+//		visviewer.getVisualizationModel().setGraph(meta, false);
+//		visviewer.getVisualizationModel().setLayoutAlgorithm(layout);
 		visviewer.setDoubleBuffered(false);
 		visviewer.setBackground(Color.white);
 
