@@ -34,6 +34,7 @@ public abstract class OVTK2Layouter  implements LayoutAlgorithm<ONDEXConcept> {
 	 */
 	public OVTK2Layouter(OVTK2PropertiesAggregator viewer) {
 		this.viewer = viewer.getVisualizationViewer();
+		this.graph = viewer.getONDEXJUNGGraph();
 	}
 
 	@Override
