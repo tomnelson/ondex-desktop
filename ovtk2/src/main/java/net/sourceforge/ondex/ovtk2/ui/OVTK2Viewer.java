@@ -322,8 +322,8 @@ public class OVTK2Viewer extends RegisteredJInternalFrame implements ActionListe
 		for (RenderingHints.Key key : temp.keySet()) {
 			hints.put(key, temp.get(key));
 		}
-		hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		visviewer.setRenderingHints(hints);
+//		hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+//		visviewer.setRenderingHints(hints);
 
 		// standard mouse support
 		OVTK2AnnotatingGraphMousePlugin anno = new OVTK2AnnotatingGraphMousePlugin(visviewer.getRenderContext());
