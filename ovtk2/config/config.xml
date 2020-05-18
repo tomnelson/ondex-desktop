@@ -47,7 +47,7 @@
 <entry key="Dialog.Attribute.java.lang.Double">DoubleEditor</entry>
 <entry key="SQL.Enable">false</entry>
 <entry key="Dialog.Attribute.java.util.List">ListEditor</entry>
-<entry key="Program.LastOpened">/home/tom/projects/ondex-full/ondex-doc/ovtk2/src/tutorial/Tutorial_files/Main_part/poplar_exercise1.oxl</entry>
+<entry key="Program.LastOpened">/home/tom/projects/ondex-full/ondex-doc/ovtk2/src/tutorial/Tutorial_files/Main_part/poplar_exercise2.oxl</entry>
 <entry key="Dialog.Attribute.java.lang.Integer">IntegerEditor</entry>
 <entry key="Viewer.VertexMenu.ChangeNodeClearFlagItem">net.sourceforge.ondex.ovtk2.ui.popup.items.ChangeNodeClearFlagItem</entry>
 <entry key="FilterClose.Option">0</entry>

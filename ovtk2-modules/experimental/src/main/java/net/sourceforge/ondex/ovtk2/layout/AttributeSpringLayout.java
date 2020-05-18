@@ -53,7 +53,7 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 	 * @author taubertj
 	 * @version 03.10.2012
 	 */
-	private class EdgeLength implements Function<Object, Integer> {
+	private class EdgeLength implements Function<ONDEXRelation, Integer> {
 
 		// cache for edge length
 		Map<ONDEXRelation, Integer> cache;
@@ -123,7 +123,7 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 		}
 
 		@Override
-		public Integer apply(Object e) {
+		public Integer apply(ONDEXRelation e) {
 			if (!cache.containsKey(e))
 				return UNITLENGTHFUNCTION.apply(e);
 			return cache.get(e);
@@ -131,7 +131,7 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 	}
 
 	// default edge length
-	public static final Function<Object, Integer> UNITLENGTHFUNCTION = v -> 20;
+	public static final Function<ONDEXRelation, Integer> UNITLENGTHFUNCTION = v -> 20;
 
 	// attribute name for length value
 	private AttributeName an = null;
@@ -145,7 +145,7 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 	/**
 	 * Wrapped JUNG layout
 	 */
-	private SpringLayoutAlgorithm<ONDEXConcept> layout = null;
+	private SpringLayoutAlgorithm<ONDEXConcept, ONDEXRelation> layout = null;
 
 	// value from JUNG
 	protected int repulsion_range = 100 * 100;
@@ -173,7 +173,7 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 	 */
 	public AttributeSpringLayout(OVTK2PropertiesAggregator viewer) {
 		super(viewer);
-		layout = new SpringLayoutAlgorithm<ONDEXConcept>();
+		layout = new SpringLayoutAlgorithm<>();
 	}
 
 	/**
@@ -185,12 +185,12 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 		String name = (String) box.getSelectedItem();
 		an = aog.getMetaData().getAttributeName(name);
 		if (an == null) {
-			layout = SpringLayoutAlgorithm.<ONDEXConcept>builder().withLengthFunction(
+			layout = SpringLayoutAlgorithm.<ONDEXConcept, ONDEXRelation>builder().withLengthFunction(
 					UNITLENGTHFUNCTION).build();
 //					new SpringLayout2<ONDEXConcept, ONDEXRelation>(graph,
 //					UNITLENGTHFUNCTION);
 		} else {
-			layout = SpringLayoutAlgorithm.<ONDEXConcept>builder().withLengthFunction(new EdgeLength(an, inverseScaleBox.isSelected())).build();
+			layout = SpringLayoutAlgorithm.<ONDEXConcept, ONDEXRelation>builder().withLengthFunction(new EdgeLength(an, inverseScaleBox.isSelected())).build();
 //					new SpringLayout2<ONDEXConcept, ONDEXRelation>(graph,
 //					new EdgeLength(an, inverseScaleBox.isSelected()));
 		}
@@ -406,11 +406,11 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 					* sizeMultiplier.getValue(), layoutModel.getHeight()
 					* sizeMultiplier.getValue());
 			if (an != null)
-				layout = SpringLayoutAlgorithm.<ONDEXConcept>builder().withLengthFunction(
+				layout = SpringLayoutAlgorithm.<ONDEXConcept,ONDEXRelation>builder().withLengthFunction(
 //						new SpringLayout2<ONDEXConcept, ONDEXRelation>(graph,
 						new EdgeLength(an, inverseScaleBox.isSelected())).build();
 			else
-				layout = SpringLayoutAlgorithm.<ONDEXConcept>builder().withLengthFunction(
+				layout = SpringLayoutAlgorithm.<ONDEXConcept, ONDEXRelation>builder().withLengthFunction(
 //						new SpringLayout2<ONDEXConcept, ONDEXRelation>(graph,
 						UNITLENGTHFUNCTION).build();
 			layout.setForceMultiplier((double) sliderForce.getValue() / 100.0);
@@ -425,9 +425,8 @@ public class AttributeSpringLayout extends OVTK2Layouter implements
 			layout.setStretch((double) sliderStretch.getValue() / 100.0);
 		} else if (arg0.getSource().equals(inverseScaleBox)) {
 			if (an != null)
-				layout = SpringLayoutAlgorithm.<ONDEXConcept>builder()
+				layout = SpringLayoutAlgorithm.<ONDEXConcept, ONDEXRelation>builder()
 						.withLengthFunction(
-//						new SpringLayout2<ONDEXConcept, ONDEXRelation>(graph,
 						new EdgeLength(an, inverseScaleBox.isSelected())).build();
 		} else if (arg0.getSource().equals(sizeMultiplier)) {
 			// to scale layout a bit larger

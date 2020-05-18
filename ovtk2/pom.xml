@@ -164,7 +164,7 @@
       <dependency>
          <groupId>com.github.tomnelson</groupId>
          <artifactId>jungrapht-visualization</artifactId>
-         <version>1.0-RC7</version>
+         <version>1.0-RC8</version>
       </dependency>
 			<dependency>
 			  <groupId>javax.help</groupId>
